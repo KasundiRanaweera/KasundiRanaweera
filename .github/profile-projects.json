@@ -1,0 +1,64 @@
+{
+  "owner": "KasundiRanaweera",
+  "cards": 4,
+  "hide_topic": "hide-from-profile",
+
+  "featured": [
+    "Application_Tracking_System-Backend",
+    "Application_Tracking_System-Frontend",
+    "Flower_Shop",
+    "Hotel_Management_AI_Agent",
+    "GoodDeeds-Main-App",
+    "GoodDeeds-MobileApp"
+  ],
+
+  "exclude": [
+    "KasundiRanaweera",
+    "exam",
+    "pusl2020inclass-day2",
+    "mobile-devops1",
+    "practical_github_actions"
+  ],
+
+  "overrides": {
+    "University-Shuttle-Service-": {
+      "title": "Campus Shuttle Service",
+      "emoji": "🚌",
+      "description": "University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning.",
+      "stack": ["React", "TypeScript", "Supabase", "Leaflet", "Cypress"]
+    },
+    "Project-Approval-System": {
+      "title": "PAS — Blind Matching",
+      "emoji": "🙈",
+      "description": "Matches student research proposals with supervisors while hiding student identities until a match is confirmed, to reduce bias.",
+      "stack": ["ASP.NET Core", "C#", "EF Core", "SQL Server"]
+    },
+    "My_First_AI_Agent": {
+      "emoji": "🤖",
+      "description": "A personal assistant that understands requests, picks the right tool and acts — built from scratch in Python on a local Llama 3.1 model.",
+      "stack": ["Python", "Ollama", "Llama 3.1", "Jupyter"]
+    },
+    "My_LLM_Learning_Projects": {
+      "title": "LLM Learning Projects",
+      "emoji": "🧠",
+      "description": "Notebooks from my day-by-day LLM learning path — prompting, tool calling and building blocks for agents.",
+      "stack": ["Python", "Jupyter", "LLMs"]
+    },
+    "Regression_ml_project": {
+      "title": "Regression ML",
+      "emoji": "📈",
+      "description": "Linear vs. polynomial regression on the diabetes dataset, evaluated with RMSE and R² and explained with feature coefficients.",
+      "stack": ["Python", "scikit-learn", "pandas", "Jupyter"]
+    },
+    "weather_app": {
+      "emoji": "⛅",
+      "description": "Desktop weather dashboard on the OpenWeatherMap API with a modern CustomTkinter UI.",
+      "stack": ["Python", "CustomTkinter", "REST API"]
+    },
+    "student_management_app": {
+      "emoji": "🎓",
+      "description": "Flutter mobile app with full create, read, update and delete for student records in Firebase Firestore.",
+      "stack": ["Flutter", "Dart", "Firestore"]
+    }
+  }
+}

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="170" viewBox="0 0 1200 170" role="img" aria-label="creating, learning, growing — thanks for stopping by">
+<title>creating, learning, growing — thanks for stopping by</title>
+<style>
+.w1 { animation: wave 14s linear infinite; }
+.w2 { animation: wave 20s linear infinite reverse; }
+@keyframes wave { to { transform: translateX(-900px); } }
+.in { animation: rise 1s cubic-bezier(.22,1,.36,1) .3s both; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}</style>
+
+<defs><clipPath id="c"><rect width="1200" height="170" rx="24"/></clipPath>
+<linearGradient id="g" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#22d3ee"/><stop offset="0.50" stop-color="#38bdf8"/><stop offset="1.00" stop-color="#6366f1"/></linearGradient>
+<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1226"/><stop offset="1" stop-color="#060a17"/></linearGradient></defs>
+<g clip-path="url(#c)">
+  <rect width="1200" height="170" fill="url(#bg)"/>
+  <path class="w2" d="M0,70 C150,30 300,110 450,70 C600,30 750,110 900,70 C1050,30 1200,110 1350,70 C1500,30 1650,110 1800,70 C1950,30 2100,110 2250,70 C2400,30 2550,110 2700,70 V170 H0Z" fill="#6366f1" opacity=".16" transform="translate(0,22)"/>
+  <path class="w1" d="M0,70 C150,30 300,110 450,70 C600,30 750,110 900,70 C1050,30 1200,110 1350,70 C1500,30 1650,110 1800,70 C1950,30 2100,110 2250,70 C2400,30 2550,110 2700,70 V170 H0Z" fill="url(#g)" opacity=".22" transform="translate(0,44)"/>
+</g>
+<rect x=".75" y=".75" width="1198.5" height="168.5" rx="23.25" fill="none" stroke="#1e2d5a"/>
+<g class="in">
+  <text x="600" y="66" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="24" font-weight="700" fill="#eef4ff" text-anchor="middle">creating <tspan fill="#22d3ee">·</tspan> learning <tspan fill="#818cf8">·</tspan> growing</text>
+  <text x="600" y="96" font-family="ui-monospace, SFMono-Regular, 'Cascadia Code', Consolas, 'Liberation Mono', monospace" font-size="14" fill="#a9b8d6" text-anchor="middle">thanks for stopping by ✦ my journey, my pace</text>
+</g>
+
+</svg>

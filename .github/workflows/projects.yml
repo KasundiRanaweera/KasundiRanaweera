@@ -1,0 +1,47 @@
+name: Refresh project showcase
+
+on:
+  schedule:
+    - cron: "17 */6 * * *"   # every 6 hours
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/profile-projects.json"
+      - "scripts/update_projects.py"
+      - "scripts/theme.py"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: project-showcase
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Rebuild project cards and README sections
+        run: python scripts/update_projects.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit if anything changed
+        run: |
+          git add README.md assets/projects
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "chore: refresh project showcase"
+            git push
+          fi
