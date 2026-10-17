@@ -54,7 +54,7 @@ MOTTO = ("✨", "exploring, creating, improving.")
 
 
 def hero():
-    W, H = 1200, 380
+    W, H = 1200, 280
     petal_svg, petal_css = petals(18, W, H, x_min=20)
 
     # tagline pills, centred as one row
@@ -65,8 +65,8 @@ def hero():
     for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
         pills.append(
             f'<g class="rise" style="animation-delay:{0.55 + i * 0.12:.2f}s">'
-            f'<rect x="{x:.0f}" y="238" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
-            f'<text x="{x + 22:.0f}" y="266" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<rect x="{x:.0f}" y="150" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'<text x="{x + 22:.0f}" y="178" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
             f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
 
@@ -79,8 +79,6 @@ def hero():
 .o3 {{ animation: drift1 21s ease-in-out infinite alternate-reverse; }}
 @keyframes drift1 {{ to {{ transform: translate(-60px, 40px) scale(1.12); }} }}
 @keyframes drift2 {{ to {{ transform: translate(70px, -30px) scale(.92); }} }}
-.caret {{ animation: blink 1s steps(1) infinite; }}
-@keyframes blink {{ 50% {{ opacity: 0; }} }}
 .shine {{ animation: shine 6s ease-in-out 1.2s infinite; }}
 @keyframes shine {{ 0% {{ transform: translateX(-200px); }} 45%, 100% {{ transform: translateX(1300px); }} }}
 .line {{ transform-box: fill-box; transform-origin: center; animation: grow 1.2s {EASE} .45s both; }}
@@ -88,7 +86,7 @@ def hero():
 @media (prefers-reduced-motion: reduce) {{ .petal {{ display: none; }} }}
 {petal_css}"""
 
-    name = f'x="600" y="196" font-family="{SANS}" font-size="80" font-weight="800" letter-spacing="-2" text-anchor="middle"'
+    name = f'x="600" y="108" font-family="{SANS}" font-size="80" font-weight="800" letter-spacing="-2" text-anchor="middle"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
@@ -108,23 +106,20 @@ def hero():
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
   <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".06"/>
   <circle class="orb o1" cx="1040" cy="40" r="300" fill="url(#gA)"/>
-  <circle class="orb o2" cx="140" cy="380" r="280" fill="url(#gC)"/>
-  <circle class="orb o3" cx="640" cy="420" r="240" fill="url(#gI)"/>
+  <circle class="orb o2" cx="140" cy="300" r="280" fill="url(#gC)"/>
+  <circle class="orb o3" cx="640" cy="330" r="240" fill="url(#gI)"/>
   {petal_svg}
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
-<g class="rise" style="animation-delay:.1s">
-  <text x="600" y="92" font-family="{MONO}" font-size="17" fill="{CYAN}" text-anchor="middle">~/kasundi <tspan fill="{AZURE}">$</tspan> <tspan fill="{MUTED}">whoami</tspan><tspan class="caret" fill="{AZURE}"> ▍</tspan></text>
-</g>
 <g class="rise" style="animation-delay:.25s">
   <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="110" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="22" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
 </g>
-<rect class="line" x="420" y="214" width="360" height="2" rx="1" fill="url(#ring)"/>
+<rect class="line" x="420" y="126" width="360" height="2" rx="1" fill="url(#ring)"/>
 {''.join(pills)}
 <g class="rise" style="animation-delay:.95s">
-  <text x="600" y="330" font-family="{SANS}" font-size="19" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{MOTTO[0]}</tspan> {escape(MOTTO[1])}</text>
+  <text x="600" y="240" font-family="{SANS}" font-size="19" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{MOTTO[0]}</tspan> {escape(MOTTO[1])}</text>
 </g>
 """
     out("hero.svg", svg(W, H, style, body, "Kasundi Ranaweera — Computer Science Undergraduate | Full-Stack Developer | AI/ML & Data Science Enthusiast | exploring, creating, improving."))
@@ -161,7 +156,7 @@ ORBITS = [  # (label, ring colour, radius, seconds per turn, [(name, icon source
         ("React", "react"), ("Vite", "vite"), ("Tailwind", "tailwind"), ("Flutter", "flutter"),
         ("Spring Boot", "spring"), ("Node.js", "nodejs"), ("Express", "express"), (".NET", "dotnet"),
         ("HTML", "html"), ("CSS", "css")]),
-    ("Data, AI & shipping", INDIGO, 260, 110, [
+    ("Data, AI & Tools", INDIGO, 260, 110, [
         ("PostgreSQL", "postgres"), ("Prisma", "prisma"), ("SQLite", "sqlite"), ("Firebase", "firebase"),
         ("Supabase", "supabase"), ("scikit-learn", "sklearn"), ("pandas", ("si", "pandas", "#ffffff")),
         ("Jupyter", ("si", "jupyter", "#F37626")), ("Ollama", ("si", "ollama", "#ffffff")),
@@ -212,7 +207,7 @@ def galaxy():
     for o, (label, col, rad, secs, items) in enumerate(ORBITS):
         legend.append(f'<g class="rise" style="animation-delay:{0.3 + o * 0.15:.2f}s">'
                       f'<circle cx="{lx + 6}" cy="{ly - 5}" r="6" fill="none" stroke="{col}" stroke-width="2.5"/>'
-                      f'<text x="{lx + 22}" y="{ly}" font-family="{MONO}" font-size="12.5" font-weight="700" fill="{col}" letter-spacing="1.5">ORBIT {o + 1} · {escape(label.upper())}</text>')
+                      f'<text x="{lx + 22}" y="{ly}" font-family="{MONO}" font-size="12.5" font-weight="700" fill="{col}" letter-spacing="1.5">{escape(label.upper())}</text>')
         x, y = lx, ly + 14
         for name, _ in items:
             w = tw(name, 13) + 22
@@ -236,8 +231,10 @@ def galaxy():
 
     import random
     rnd = random.Random(3)
-    stars = "".join(f'<circle class="twinkle" cx="{rnd.randint(10, W - 10)}" cy="{rnd.randint(10, H - 10)}" r="{rnd.choice([0.8, 1, 1.4])}" '
-                    f'fill="{ICE}" style="animation-delay:-{rnd.uniform(0, 3):.1f}s"/>' for _ in range(70))
+    pts = [(rnd.randint(10, W - 10), rnd.randint(10, H - 10)) for _ in range(90)]
+    pts = [(x, y) for x, y in pts if not (lx - 20 < x < W - 20 and 80 < y < ly)][:70]   # keep the legend clear
+    stars = "".join(f'<circle class="twinkle" cx="{x}" cy="{y}" r="{rnd.choice([0.8, 1, 1.4])}" '
+                    f'fill="{ICE}" style="animation-delay:-{rnd.uniform(0, 3):.1f}s"/>' for x, y in pts)
 
     body = f"""
 <defs>
@@ -259,8 +256,7 @@ def galaxy():
 <text x="{cx}" y="{cy + 8}" font-family="{SANS}" font-size="22" font-weight="800" fill="url(#title)" text-anchor="middle">KR</text>
 
 <g class="rise">
-  <text x="{lx}" y="77" font-family="{MONO}" font-size="13" fill="{DIM}">~/tech-galaxy <tspan fill="{AZURE}">--orbit</tspan></text>
-  <text x="{lx}" y="119" font-family="{SANS}" font-size="32" font-weight="800" fill="url(#title)">Everything in my orbit</text>
+  <text x="{lx}" y="119" font-family="{SANS}" font-size="32" font-weight="800" fill="url(#title)">My tech stack</text>
 </g>
 {''.join(legend)}
 """

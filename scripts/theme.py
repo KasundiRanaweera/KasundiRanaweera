@@ -58,30 +58,30 @@ def wrap(text, width=56, lines=3):
 # project card — used for the hand-picked featured cards and the auto-generated ones
 # =====================================================================================
 def card(title, tag, desc_lines, stack, accent, emoji="✨", number="", live=False, badge=None):
-    W, H = 580, 320
+    W, H = 580, 282
     a = accent
     chips, x = [], 32
     for t in stack:
         w = tw(t, 13) + 24
         if x + w > W - 32:
             break
-        chips.append(f'<rect x="{x}" y="214" width="{w:.0f}" height="28" rx="14" fill="{a}" fill-opacity=".1" stroke="{a}" stroke-opacity=".35"/>'
-                     f'<text x="{x + w / 2:.0f}" y="233" font-family="{SANS}" font-size="13" fill="{TEXT}" text-anchor="middle">{escape(t)}</text>')
+        chips.append(f'<rect x="{x}" y="184" width="{w:.0f}" height="28" rx="14" fill="{a}" fill-opacity=".1" stroke="{a}" stroke-opacity=".35"/>'
+                     f'<text x="{x + w / 2:.0f}" y="203" font-family="{SANS}" font-size="13" fill="{TEXT}" text-anchor="middle">{escape(t)}</text>')
         x += w + 8
-    desc = "".join(f'<text x="32" y="{132 + i * 25}" font-family="{SANS}" font-size="15.5" fill="{MUTED}">{escape(d)}</text>'
+    desc = "".join(f'<text x="32" y="{114 + i * 24}" font-family="{SANS}" font-size="15.5" fill="{MUTED}">{escape(d)}</text>'
                    for i, d in enumerate(desc_lines))
     if live:
-        cta = (f'<rect x="32" y="264" width="128" height="30" rx="15" fill="url(#cta)"/>'
-               f'<circle class="pulse" cx="50" cy="279" r="4" fill="{BG0}"/><circle cx="50" cy="279" r="4" fill="{BG0}"/>'
-               f'<text x="62" y="284" font-family="{SANS}" font-size="13" font-weight="700" fill="{BG0}">LIVE DEMO ↗</text>'
-               f'<text x="176" y="284" font-family="{SANS}" font-size="13" fill="{DIM}">+ source on GitHub</text>')
+        cta = (f'<rect x="32" y="228" width="128" height="30" rx="15" fill="url(#cta)"/>'
+               f'<circle class="pulse" cx="50" cy="243" r="4" fill="{BG0}"/><circle cx="50" cy="243" r="4" fill="{BG0}"/>'
+               f'<text x="62" y="248" font-family="{SANS}" font-size="13" font-weight="700" fill="{BG0}">LIVE DEMO ↗</text>'
+               f'<text x="176" y="248" font-family="{SANS}" font-size="13" fill="{DIM}">+ source on GitHub</text>')
     else:
-        cta = (f'<rect x="32" y="264" width="128" height="30" rx="15" fill="none" stroke="{a}"/>'
-               f'<text x="96" y="284" font-family="{SANS}" font-size="13" font-weight="700" fill="{a}" text-anchor="middle">VIEW CODE ↗</text>')
+        cta = (f'<rect x="32" y="228" width="128" height="30" rx="15" fill="none" stroke="{a}"/>'
+               f'<text x="96" y="248" font-family="{SANS}" font-size="13" font-weight="700" fill="{a}" text-anchor="middle">VIEW CODE ↗</text>')
     if badge:
         bw = tw(badge, 11, mono=True) + 22
-        cta += (f'<rect x="{W - 32 - bw:.0f}" y="268" width="{bw:.0f}" height="22" rx="11" fill="{a}" fill-opacity=".12"/>'
-                f'<text x="{W - 32 - bw / 2:.0f}" y="283" font-family="{MONO}" font-size="11" fill="{a}" text-anchor="middle">{escape(badge)}</text>')
+        cta += (f'<rect x="{W - 32 - bw:.0f}" y="232" width="{bw:.0f}" height="22" rx="11" fill="{a}" fill-opacity=".12"/>'
+                f'<text x="{W - 32 - bw / 2:.0f}" y="247" font-family="{MONO}" font-size="11" fill="{a}" text-anchor="middle">{escape(badge)}</text>')
     title_size = 26 if tw(title, 26) < 330 else 21
 
     style = f"""
@@ -107,14 +107,14 @@ def card(title, tag, desc_lines, stack, accent, emoji="✨", number="", live=Fal
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
   <circle class="glow" cx="{W - 40}" cy="30" r="190" fill="url(#g)"/>
   <rect class="sweep" x="0" y="-40" width="160" height="{H + 80}" fill="url(#s)"/>
-  <text x="{W - 28}" y="96" font-family="{SANS}" font-size="96" font-weight="800" fill="{a}" fill-opacity=".1" text-anchor="end">{escape(number)}</text>
+  <text x="{W - 28}" y="92" font-family="{SANS}" font-size="96" font-weight="800" fill="{a}" fill-opacity=".1" text-anchor="end">{escape(number)}</text>
 </g>
 <rect x="1" y="1" width="{W - 2}" height="{H - 2}" rx="21" fill="none" stroke="url(#b)" stroke-width="1.5"/>
 <g class="in">
-  <rect x="32" y="30" width="54" height="54" rx="16" fill="{a}" fill-opacity=".14" stroke="{a}" stroke-opacity=".4"/>
-  <text x="59" y="67" font-size="26" text-anchor="middle">{emoji}</text>
-  <text x="104" y="57" font-family="{SANS}" font-size="{title_size}" font-weight="800" fill="{TEXT}">{escape(title)}</text>
-  <text x="105" y="80" font-family="{MONO}" font-size="13" fill="{a}">{escape(tag)}</text>
+  <rect x="32" y="26" width="54" height="54" rx="16" fill="{a}" fill-opacity=".14" stroke="{a}" stroke-opacity=".4"/>
+  <text x="59" y="63" font-size="26" text-anchor="middle">{emoji}</text>
+  <text x="104" y="53" font-family="{SANS}" font-size="{title_size}" font-weight="800" fill="{TEXT}">{escape(title)}</text>
+  <text x="105" y="76" font-family="{MONO}" font-size="13" fill="{a}">{escape(tag)}</text>
 </g>
 <g class="in" style="animation-delay:.12s">{desc}</g>
 <g class="in" style="animation-delay:.24s">{''.join(chips)}</g>

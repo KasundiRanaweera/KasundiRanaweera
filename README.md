@@ -9,6 +9,14 @@
 <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
 <a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
 
+<br/><br/>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg"/>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-light.svg"/>
+  <img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg" width="100%" alt="My GitHub contribution chart"/>
+</picture>
+
 </div>
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
@@ -94,7 +102,7 @@ who enjoys taking products from first idea to live deployment.
 
 ## ✦ &nbsp;Tech stack
 
-<img src="./assets/tech-galaxy.svg" width="100%" alt="My tech stack as a galaxy: languages (Java, Python, TypeScript, JavaScript, Dart, C#, C++), frameworks (React, Vite, Tailwind, Flutter, Spring Boot, Node.js, Express, .NET, HTML, CSS) and data, AI and shipping tools (PostgreSQL, Prisma, SQLite, Firebase, Supabase, scikit-learn, pandas, Jupyter, Ollama, Groq, Gradio, Git, GitHub Actions, Docker, Vercel, Postman, Jest, Cypress)"/>
+<img src="./assets/tech-galaxy.svg" width="100%" alt="My tech stack: languages (Java, Python, TypeScript, JavaScript, Dart, C#, C++), frameworks (React, Vite, Tailwind, Flutter, Spring Boot, Node.js, Express, .NET, HTML, CSS) and data, AI & tools (PostgreSQL, Prisma, SQLite, Firebase, Supabase, scikit-learn, pandas, Jupyter, Ollama, Groq, Gradio, Git, GitHub Actions, Docker, Vercel, Postman, Jest, Cypress)"/>
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
 
@@ -104,12 +112,6 @@ who enjoys taking products from first idea to live deployment.
 
 <img src="https://streak-stats.demolab.com?user=KasundiRanaweera&hide_border=true&border_radius=20&background=0b1226&stroke=1e2d5a&ring=38bdf8&fire=38bdf8&currStreakNum=eef4ff&sideNums=eef4ff&currStreakLabel=38bdf8&sideLabels=a9b8d6&dates=5f6f8f" height="180" alt="GitHub streak"/>
 <img src="https://github-readme-stats.vercel.app/api/top-langs/?username=KasundiRanaweera&layout=compact&hide_border=true&border_radius=20&bg_color=0b1226&title_color=38bdf8&text_color=a9b8d6&langs_count=6&hide=jupyter%20notebook,html,css,cmake,c%2B%2B,c" height="180" alt="Top languages"/>
-
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg"/>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-light.svg"/>
-  <img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg" width="100%" alt="A snake eating my contribution graph"/>
-</picture>
 
 </div>
 
