@@ -1,15 +1,13 @@
 <div align="center">
 
 <a href="https://github.com/KasundiRanaweera">
-  <img src="./assets/hero.svg" width="100%" alt="Kasundi Ranaweera — Full-Stack Developer · AI Agent Builder · Flutter Mobile Developer · CS Undergraduate at NSBM"/>
+  <img src="./assets/hero.svg" width="100%" alt="Kasundi Ranaweera — 🎓 Computer Science Undergraduate | 💻 Full-Stack Developer | 🤖 AI/ML & Data Science Enthusiast | ✨ exploring, creating, improving."/>
 </a>
 
 <br/>
 
-<a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Let's_connect-38bdf8?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn"/></a>
-<a href="https://talentbridge-application-tracking-system.vercel.app"><img src="https://img.shields.io/badge/TalentBridge-Live-818cf8?style=for-the-badge&logo=vercel&logoColor=white&labelColor=0b1226" alt="TalentBridge live demo"/></a>
-<a href="https://flower-shop-kasundi.vercel.app"><img src="https://img.shields.io/badge/Ceylon_Petals-Live-22d3ee?style=for-the-badge&logo=vercel&logoColor=white&labelColor=0b1226" alt="Ceylon Petals live demo"/></a>
-<img src="https://komarev.com/ghpvc/?username=KasundiRanaweera&label=profile%20views&color=38bdf8&style=for-the-badge&labelColor=0b1226" alt="Profile views"/>
+<a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
+<a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
 
 </div>
 
@@ -17,10 +15,14 @@
 
 ## ✦ &nbsp;About me
 
-<img src="./assets/about.svg" width="100%" alt="const kasundi = { role: 'Full-Stack Developer & AI tinkerer', studying: 'BSc (Hons) Computer Science @ NSBM', basedIn: 'Sri Lanka', builds: ['web apps', 'AI agents', 'mobile apps'], focus: 'LLM tool calling & AI agents', learning: ['system design', 'testing', 'CI/CD'], nextUp: 'dissertation — NLP for low-resource languages', seeking: 'software · data · ML internships', motto: 'my journey, my pace' }"/>
+I'm a **BSc (Hons) Computer Science** undergraduate at **NSBM Green University**, Sri Lanka, and a full-stack developer
+who enjoys taking products from first idea to live deployment.
 
-I like taking an idea **all the way** from the database schema to a deployed UI — and lately I've been
-teaching LLMs to *use tools*: agents that ask for missing details instead of guessing, and protect data from accidental loss.
+
+- 🎯 **Focus areas** — full-stack development · AI agents & LLM · machine learning
+- 📚 **Currently strengthening** — system design · automated testing · CI/CD
+- 🔬 **Up next** — final-year research in NLP for low-resource languages
+- 💼 **Open to** — software engineering, data or ML internships (on-site or hybrid)
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
 
@@ -48,10 +50,6 @@ teaching LLMs to *use tools*: agents that ask for missing details instead of gue
     </td>
   </tr>
 </table>
-
-### 🔹 Fresh from the workshop
-
-<sub>This section updates itself every day — new projects show up here as soon as they're created.</sub>
 
 <!-- LATEST-PROJECTS:START -->
 <table>
@@ -97,12 +95,6 @@ teaching LLMs to *use tools*: agents that ask for missing details instead of gue
 ## ✦ &nbsp;Tech stack
 
 <img src="./assets/tech-galaxy.svg" width="100%" alt="My tech stack as a galaxy: languages (Java, Python, TypeScript, JavaScript, Dart, C#, C++), frameworks (React, Vite, Tailwind, Flutter, Spring Boot, Node.js, Express, .NET, HTML, CSS) and data, AI and shipping tools (PostgreSQL, Prisma, SQLite, Firebase, Supabase, scikit-learn, pandas, Jupyter, Ollama, Groq, Gradio, Git, GitHub Actions, Docker, Vercel, Postman, Jest, Cypress)"/>
-
-<img src="./assets/divider.svg" width="100%" alt=""/>
-
-## ✦ &nbsp;The journey so far
-
-<img src="./assets/journey.svg" width="100%" alt="Feb 2026: first repos. Mar: Flutter and React — student CRUD app, campus shuttle system. Apr: GoodDeeds app and blind-match PAS in .NET. Jun: Spring Boot APIs and CI with GitHub Actions. Aug: TalentBridge ATS live, regression ML. Sep: Ceylon Petals and the hotel AI agent. Next: an internship and NLP research for low-resource languages."/>
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
 

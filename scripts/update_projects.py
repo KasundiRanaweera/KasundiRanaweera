@@ -124,7 +124,7 @@ def render(projects):
         badge = "NEW" if fresh else p["created"].strftime("%b %Y")
         tag = " · ".join(x for x in [(p["lang"] or "project").lower(), p["created"].strftime("%b '%y").lower()] if x)
         svg = card(p["title"], tag, wrap(p["desc"]), p["stack"], ACCENTS[i % len(ACCENTS)],
-                   emoji=p["emoji"], number=f"{i + 1:02d}", live=bool(p["homepage"]), badge=badge)
+                   emoji=p["emoji"], number=f"{i + CONFIG['first_card_number']:02d}", live=bool(p["homepage"]), badge=badge)
         fname = f"{p['name']}.svg"
         wanted.add(fname)
         write(os.path.join(CARD_DIR, fname), svg)

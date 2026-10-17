@@ -25,7 +25,7 @@
   <rect width="580" height="320" fill="url(#bg)"/>
   <circle class="glow" cx="540" cy="30" r="190" fill="url(#g)"/>
   <rect class="sweep" x="0" y="-40" width="160" height="400" fill="url(#s)"/>
-  <text x="552" y="96" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="96" font-weight="800" fill="#22d3ee" fill-opacity=".1" text-anchor="end">03</text>
+  <text x="552" y="96" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="96" font-weight="800" fill="#22d3ee" fill-opacity=".1" text-anchor="end">07</text>
 </g>
 <rect x="1" y="1" width="578" height="318" rx="21" fill="none" stroke="url(#b)" stroke-width="1.5"/>
 <g class="in">

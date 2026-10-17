@@ -1,48 +1,34 @@
 """Generate the hand-made animated SVG assets for the profile README.
 
-usage: python build_assets.py <dir with 1.jpg (photo) and 2.jpg (3D avatar)> <assets dir>
-needs: Pillow, internet access (tech logos are fetched and embedded at build time)
+usage: python build_assets.py <assets dir>
+needs: internet access (tech logos are fetched and embedded at build time)
 
 Project cards for new repositories are generated separately by update_projects.py.
 """
-import base64, io, math, os, re, sys, urllib.request
+import base64, math, os, re, sys, urllib.request
 from xml.sax.saxutils import escape
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from theme import *  # noqa: E402,F403
-from PIL import Image  # noqa: E402
 
-IMG_DIR, OUT = sys.argv[1], sys.argv[2]
+OUT = sys.argv[1]
 
 
 def out(name, content):
     write(os.path.join(OUT, name), content)
 
 
-def jpeg_b64(img, size, quality=86):
-    buf = io.BytesIO()
-    img.convert("RGB").resize(size, Image.LANCZOS).save(buf, "JPEG", quality=quality, optimize=True)
-    return base64.b64encode(buf.getvalue()).decode()
-
-
-avatar = Image.open(os.path.join(IMG_DIR, "2.jpg"))
-photo = Image.open(os.path.join(IMG_DIR, "1.jpg"))
-# 3D avatar: square crop of head + shoulders, well clear of the bottom-right watermark
-AVATAR = jpeg_b64(avatar.crop((95, 400, 805, 1110)), (320, 320))
-# real photo: portrait crop for the polaroid
-PHOTO = jpeg_b64(photo.crop((30, 150, 894, 1230)), (304, 380))
-
 PETAL = "M0,-10 C7,-10 10,-2 0,10 C-10,-2 -7,-10 0,-10Z"
 SPARK = "M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2Z"
 
 
-def petals(n, w, h, seed=7):
+def petals(n, w, h, seed=7, x_min=380):
     import random
     rnd = random.Random(seed)
     shapes, css = [], []
     colors = [SKY, AZURE, INDIGO, CYAN, ICE]
     for i in range(n):
-        x = rnd.randint(380, w - 20)
+        x = rnd.randint(x_min, w - 20)
         dur = rnd.uniform(11, 19)
         delay = -rnd.uniform(0, dur)
         drift = rnd.randint(-90, 60)
@@ -59,26 +45,30 @@ def petals(n, w, h, seed=7):
 
 
 # =====================================================================================
-# HERO
+# HERO — name + tagline, centred
 # =====================================================================================
+TAGLINE = [("🎓", "Computer Science Undergraduate", CYAN),
+           ("💻", "Full-Stack Developer", AZURE),
+           ("🤖", "AI/ML & Data Science Enthusiast", INDIGO)]
+MOTTO = ("✨", "exploring, creating, improving.")
+
+
 def hero():
-    W, H = 1200, 440
-    cx, cy, r = 232, 220, 124
-    petal_svg, petal_css = petals(16, W, H)
-    roles = ["Full-Stack Developer", "AI Agent Builder", "Flutter Mobile Developer", "CS Undergraduate @ NSBM"]
-    role_svg = "\n".join(
-        f'<text class="role r{i}" x="458" y="262" font-family="{SANS}" font-size="27" font-weight="600" '
-        f'fill="{TEXT}">{escape(t)}</text>' for i, t in enumerate(roles))
-    chips = [("Sri Lanka", CYAN), ("BSc (Hons) Computer Science", INDIGO), ("Java · TypeScript · Python · Dart", AZURE)]
-    chip_svg, x = [], 430
-    for i, (t, c) in enumerate(chips):
-        w = tw(t, 14) + 44
-        chip_svg.append(
-            f'<g class="rise" style="animation-delay:{0.75 + i * 0.1:.2f}s">'
-            f'<rect x="{x}" y="336" width="{w:.0f}" height="34" rx="17" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".45"/>'
-            f'<circle cx="{x + 17}" cy="353" r="4" fill="{c}"/>'
-            f'<text x="{x + 29}" y="358" font-family="{SANS}" font-size="14" fill="{TEXT}">{escape(t)}</text></g>')
-        x += w + 12
+    W, H = 1200, 380
+    petal_svg, petal_css = petals(18, W, H, x_min=20)
+
+    # tagline pills, centred as one row
+    fs, gap = 17, 14
+    widths = [tw(t, fs) * 1.08 + fs + 56 for _, t, _ in TAGLINE]
+    x = (W - sum(widths) - gap * (len(widths) - 1)) / 2
+    pills = []
+    for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
+        pills.append(
+            f'<g class="rise" style="animation-delay:{0.55 + i * 0.12:.2f}s">'
+            f'<rect x="{x:.0f}" y="238" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'<text x="{x + 22:.0f}" y="266" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
+        x += w + gap
 
     style = f"""
 .rise {{ animation: rise .8s {EASE} both; }}
@@ -89,28 +79,16 @@ def hero():
 .o3 {{ animation: drift1 21s ease-in-out infinite alternate-reverse; }}
 @keyframes drift1 {{ to {{ transform: translate(-60px, 40px) scale(1.12); }} }}
 @keyframes drift2 {{ to {{ transform: translate(70px, -30px) scale(.92); }} }}
-.spin {{ transform-box: view-box; transform-origin: {cx}px {cy}px; animation: spin 26s linear infinite; }}
-.spin.rev {{ animation-duration: 40s; animation-direction: reverse; }}
-.orbit {{ transform-box: view-box; transform-origin: {cx}px {cy}px; animation: spin 9s linear infinite; }}
-@keyframes spin {{ to {{ transform: rotate(360deg); }} }}
-.avatar {{ transform-box: view-box; transform-origin: {cx}px {cy}px; animation: pop 1s {EASE} both; }}
-@keyframes pop {{ from {{ opacity: 0; transform: scale(.88); }} to {{ opacity: 1; transform: none; }} }}
-.pulse {{ transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-out infinite; }}
-@keyframes pulse {{ from {{ opacity: .7; transform: scale(1); }} to {{ opacity: 0; transform: scale(2.6); }} }}
-.role {{ opacity: 0; animation: role 12s {EASE} infinite; }}
-.r1 {{ animation-delay: 3s; }} .r2 {{ animation-delay: 6s; }} .r3 {{ animation-delay: 9s; }}
-@keyframes role {{
-  0% {{ opacity: 0; transform: translateY(16px); }}
-  4%, 21% {{ opacity: 1; transform: none; }}
-  25%, 100% {{ opacity: 0; transform: translateY(-16px); }}
-}}
 .caret {{ animation: blink 1s steps(1) infinite; }}
 @keyframes blink {{ 50% {{ opacity: 0; }} }}
 .shine {{ animation: shine 6s ease-in-out 1.2s infinite; }}
-@keyframes shine {{ 0% {{ transform: translateX(-200px); }} 45%, 100% {{ transform: translateX(760px); }} }}
-@media (prefers-reduced-motion: reduce) {{ .r0 {{ opacity: 1; }} .petal {{ display: none; }} }}
+@keyframes shine {{ 0% {{ transform: translateX(-200px); }} 45%, 100% {{ transform: translateX(1300px); }} }}
+.line {{ transform-box: fill-box; transform-origin: center; animation: grow 1.2s {EASE} .45s both; }}
+@keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
+@media (prefers-reduced-motion: reduce) {{ .petal {{ display: none; }} }}
 {petal_css}"""
 
+    name = f'x="600" y="196" font-family="{SANS}" font-size="80" font-weight="800" letter-spacing="-2" text-anchor="middle"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
@@ -118,136 +96,38 @@ def hero():
   <radialGradient id="gC"><stop offset="0" stop-color="{CYAN}" stop-opacity=".35"/><stop offset="1" stop-color="{CYAN}" stop-opacity="0"/></radialGradient>
   <radialGradient id="gI"><stop offset="0" stop-color="#6366f1" stop-opacity=".5"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
   <linearGradient id="name" x1="0" y1="0" x2="1" y2="0">{stops(GRAD)}</linearGradient>
-  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">{stops(RING)}</linearGradient>
+  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CYAN}" stop-opacity="0"/><stop offset=".5" stop-color="{AZURE}"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
   <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </linearGradient>
   <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="{TEXT}"/></pattern>
   <clipPath id="card"><rect width="{W}" height="{H}" rx="28"/></clipPath>
-  <clipPath id="face"><circle cx="{cx}" cy="{cy}" r="{r}"/></clipPath>
-  <mask id="nameMask"><text x="428" y="214" font-family="{SANS}" font-size="66" font-weight="800" letter-spacing="-1.5" fill="#fff">Kasundi Ranaweera</text></mask>
+  <mask id="nameMask"><text {name} fill="#fff">Kasundi Ranaweera</text></mask>
 </defs>
 <g clip-path="url(#card)">
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
   <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".06"/>
-  <circle class="orb o1" cx="1010" cy="70" r="300" fill="url(#gA)"/>
-  <circle class="orb o2" cx="200" cy="430" r="280" fill="url(#gC)"/>
-  <circle class="orb o3" cx="760" cy="440" r="240" fill="url(#gI)"/>
+  <circle class="orb o1" cx="1040" cy="40" r="300" fill="url(#gA)"/>
+  <circle class="orb o2" cx="140" cy="380" r="280" fill="url(#gC)"/>
+  <circle class="orb o3" cx="640" cy="420" r="240" fill="url(#gI)"/>
   {petal_svg}
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
-<!-- avatar -->
-<g class="avatar">
-  <circle cx="{cx}" cy="{cy}" r="{r + 26}" fill="{AZURE}" fill-opacity=".07"/>
-  <circle class="spin" cx="{cx}" cy="{cy}" r="{r + 18}" fill="none" stroke="url(#ring)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 12"/>
-  <circle class="spin rev" cx="{cx}" cy="{cy}" r="{r + 9}" fill="none" stroke="url(#ring)" stroke-width="2.5" stroke-dasharray="120 40 30 40" stroke-linecap="round" opacity=".9"/>
-  <image href="data:image/jpeg;base64,{AVATAR}" x="{cx - r}" y="{cy - r}" width="{2 * r}" height="{2 * r}" clip-path="url(#face)" preserveAspectRatio="xMidYMid slice"/>
-  <g class="orbit"><g transform="translate({cx},{cy - r - 18})"><path d="{SPARK}" fill="{SKY}" transform="scale(1.1)"/></g></g>
-  <g transform="translate({cx - 78},{cy + r + 2})">
-    <rect width="156" height="32" rx="16" fill="{BG1}" stroke="{CYAN}" stroke-opacity=".6"/>
-    <circle class="pulse" cx="20" cy="16" r="5" fill="{CYAN}"/><circle cx="20" cy="16" r="5" fill="{CYAN}"/>
-    <text x="33" y="21" font-family="{SANS}" font-size="13" font-weight="600" fill="{TEXT}">open to internships</text>
-  </g>
+<g class="rise" style="animation-delay:.1s">
+  <text x="600" y="92" font-family="{MONO}" font-size="17" fill="{CYAN}" text-anchor="middle">~/kasundi <tspan fill="{AZURE}">$</tspan> <tspan fill="{MUTED}">whoami</tspan><tspan class="caret" fill="{AZURE}"> ▍</tspan></text>
 </g>
-
-<!-- text -->
-<g class="rise" style="animation-delay:.15s">
-  <text x="430" y="130" font-family="{MONO}" font-size="17" fill="{CYAN}">~/kasundi <tspan fill="{AZURE}">$</tspan> <tspan fill="{MUTED}">whoami</tspan><tspan class="caret" fill="{AZURE}"> ▍</tspan></text>
+<g class="rise" style="animation-delay:.25s">
+  <text {name} fill="url(#name)">Kasundi Ranaweera</text>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="110" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
 </g>
-<g class="rise" style="animation-delay:.3s">
-  <text x="428" y="214" font-family="{SANS}" font-size="66" font-weight="800" letter-spacing="-1.5" fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="380" y="140" width="140" height="90" fill="url(#shineG)" transform="translate(-200,0)"/></g>
+<rect class="line" x="420" y="214" width="360" height="2" rx="1" fill="url(#ring)"/>
+{''.join(pills)}
+<g class="rise" style="animation-delay:.95s">
+  <text x="600" y="330" font-family="{SANS}" font-size="19" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{MOTTO[0]}</tspan> {escape(MOTTO[1])}</text>
 </g>
-<g class="rise" style="animation-delay:.45s">
-  <text x="430" y="262" font-family="{SANS}" font-size="27" font-weight="600" fill="{AZURE}">›</text>
-  {role_svg}
-</g>
-<g class="rise" style="animation-delay:.6s">
-  <text x="430" y="306" font-family="{SANS}" font-size="17.5" fill="{MUTED}">Turning ideas into deployed products — from the database schema all the way to the UI.</text>
-</g>
-{''.join(chip_svg)}
 """
-    out("hero.svg", svg(W, H, style, body, "Kasundi Ranaweera — Full-Stack Developer, AI agent builder, CS undergraduate"))
-
-
-# =====================================================================================
-# ABOUT (polaroid + code editor)
-# =====================================================================================
-def about():
-    W, H = 1200, 480
-    K, V, P, S, C, KEY = INDIGO, SKY, MUTED, "#bfdbfe", DIM, CYAN
-
-    def s(t): return (f'"{t}"', S)
-    lines = [
-        [("const ", K), ("kasundi", V), (" = {", P)],
-        [("  role:     ", KEY), s("Full-Stack Developer & AI tinkerer"), (",", P)],
-        [("  studying: ", KEY), s("BSc (Hons) Computer Science @ NSBM"), (",", P)],
-        [("  basedIn:  ", KEY), s("Sri Lanka"), (",", P)],
-        [("  builds:   ", KEY), ("[", P), s("web apps"), (", ", P), s("AI agents"), (", ", P), s("mobile apps"), ("],", P)],
-        [("  focus:    ", KEY), s("LLM tool calling & AI agents"), (",", P)],
-        [("  learning: ", KEY), ("[", P), s("system design"), (", ", P), s("testing"), (", ", P), s("CI/CD"), ("],", P)],
-        [("  nextUp:   ", KEY), s("dissertation — NLP for low-resource languages"), (",", P)],
-        [("  seeking:  ", KEY), s("software · data · ML internships"), (",", P)],
-        [("  motto:    ", KEY), s("my journey, my pace"), (",", P)],
-        [("};", P)],
-        [("// just a girl in tech, turning ideas into reality ✦", C)],
-    ]
-    code = []
-    for i, toks in enumerate(lines):
-        y = 116 + i * 27
-        spans = "".join(f'<tspan fill="{c}">{escape(t)}</tspan>' for t, c in toks)
-        code.append(f'<g class="ln" style="animation-delay:{0.35 + i * 0.11:.2f}s">'
-                    f'<text x="452" y="{y}" font-family="{MONO}" font-size="13" fill="{DIM}" text-anchor="end">{i + 1}</text>'
-                    f'<text x="474" y="{y}" font-family="{MONO}" font-size="15.5" xml:space="preserve">{spans}</text></g>')
-    last_y = 116 + (len(lines) - 1) * 27
-    caret_x = 474 + tw(lines[-1][0][0], 15.5, mono=True) + 4
-
-    style = f"""
-.ln {{ animation: ln .6s {EASE} both; }}
-@keyframes ln {{ from {{ opacity: 0; transform: translateX(-8px); }} to {{ opacity: 1; transform: none; }} }}
-.win {{ animation: rise .8s {EASE} both; }}
-@keyframes rise {{ from {{ opacity: 0; transform: translateY(16px); }} to {{ opacity: 1; transform: none; }} }}
-.polaroid {{ transform-box: view-box; transform-origin: 215px 60px; animation: sway 7s ease-in-out infinite alternate; }}
-@keyframes sway {{ from {{ transform: rotate(-4.5deg); }} to {{ transform: rotate(-2deg); }} }}
-.caret {{ animation: blink 1s steps(1) infinite; }}
-@keyframes blink {{ 50% {{ opacity: 0; }} }}
-.spark {{ transform-box: fill-box; transform-origin: center; animation: twinkle 3s ease-in-out infinite; }}
-@keyframes twinkle {{ 0%, 100% {{ opacity: .2; transform: scale(.6) rotate(0deg); }} 50% {{ opacity: 1; transform: scale(1) rotate(45deg); }} }}
-@media (prefers-reduced-motion: reduce) {{ .polaroid {{ transform: rotate(-3deg); }} }}"""
-
-    body = f"""
-<defs>
-  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity=".45"/></filter>
-  <clipPath id="pic"><rect x="81" y="76" width="268" height="300" rx="4"/></clipPath>
-  <linearGradient id="bar" x1="0" y1="0" x2="1" y2="0">{stops(RING)}</linearGradient>
-  <linearGradient id="win" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{BG1}"/><stop offset="1" stop-color="{BG0}"/></linearGradient>
-</defs>
-
-<!-- polaroid -->
-<g class="polaroid" filter="url(#shadow)">
-  <rect x="65" y="60" width="300" height="384" rx="6" fill="#f6f9ff"/>
-  <image href="data:image/jpeg;base64,{PHOTO}" x="81" y="76" width="268" height="300" clip-path="url(#pic)" preserveAspectRatio="xMidYMid slice"/>
-  <text x="215" y="414" font-family="'Segoe Print', 'Bradley Hand', 'Comic Sans MS', cursive" font-size="17" fill="#1e3a8a" text-anchor="middle">the human behind the commits ✦</text>
-  <rect x="170" y="44" width="92" height="30" fill="{AZURE}" fill-opacity=".55" transform="rotate(-6 216 59)"/>
-</g>
-<path class="spark" d="{SPARK}" fill="{AZURE}" transform="translate(372,84)"/>
-<path class="spark" d="{SPARK}" fill="{CYAN}" transform="translate(52,420) scale(.7)" style="animation-delay:1.2s"/>
-
-<!-- editor -->
-<g class="win" style="animation-delay:.1s">
-  <rect x="412" y="20" width="768" height="444" rx="18" fill="url(#win)" stroke="{LINE}" stroke-width="1.5"/>
-  <path d="M412,58 V38 a18,18 0 0 1 18,-18 H1162 a18,18 0 0 1 18,18 V58 Z" fill="{BG0}"/>
-  <rect x="412" y="56" width="768" height="2.5" fill="url(#bar)" opacity=".85"/>
-  <circle cx="438" cy="39" r="6" fill="#ff6b81"/><circle cx="458" cy="39" r="6" fill="#ffd166"/><circle cx="478" cy="39" r="6" fill="#4ade80"/>
-  <rect x="502" y="26" width="132" height="30" rx="8" fill="{BG1}"/>
-  <text x="518" y="46" font-family="{MONO}" font-size="13" fill="{TEXT}"><tspan fill="{AZURE}">TS</tspan>  about-me.ts</text>
-  <text x="1160" y="45" font-family="{MONO}" font-size="12" fill="{DIM}" text-anchor="end">● saved</text>
-</g>
-{''.join(code)}
-<rect class="caret" x="{caret_x:.0f}" y="{last_y - 15}" width="9" height="19" fill="{AZURE}" style="animation-delay:1.8s"/>
-"""
-    out("about.svg", svg(W, H, style, body, "About Kasundi: full-stack developer and CS undergraduate at NSBM, Sri Lanka, focused on AI agents and seeking internships"))
+    out("hero.svg", svg(W, H, style, body, "Kasundi Ranaweera — Computer Science Undergraduate | Full-Stack Developer | AI/ML & Data Science Enthusiast | exploring, creating, improving."))
 
 
 # =====================================================================================
@@ -423,62 +303,6 @@ def featured():
 
 
 # =====================================================================================
-# JOURNEY TIMELINE
-# =====================================================================================
-def timeline():
-    W, H = 1200, 250
-    steps = [
-        ("FEB '26", "Hello, GitHub", ["first repos,", "first commits"]),
-        ("MAR '26", "Flutter + React", ["student CRUD app,", "campus shuttle system"]),
-        ("APR '26", "Built for people", ["GoodDeeds app,", "blind-match PAS (.NET)"]),
-        ("JUN '26", "Backend bootcamp", ["Spring Boot APIs,", "CI with GitHub Actions"]),
-        ("AUG '26", "Ship it", ["TalentBridge ATS live,", "regression ML"]),
-        ("SEP '26", "Enter the agents", ["Ceylon Petals,", "hotel AI agent"]),
-        ("NEXT", "Internship ✦", ["NLP for low-resource", "languages"]),
-    ]
-    cols = [CYAN, SKY, AZURE, BLUE, "#6d8ff8", INDIGO, CYAN]
-    x0, x1, ly = 100, 1100, 128
-    step = (x1 - x0) / (len(steps) - 1)
-    nodes = []
-    for i, (m, t, sub) in enumerate(steps):
-        c, x, d = cols[i], x0 + i * step, 0.35 + i * 0.22
-        last = i == len(steps) - 1
-        dot = f'<circle class="pulse" cx="{x:.0f}" cy="{ly}" r="9" fill="{c}" style="animation-delay:{d + .4:.2f}s"/>' if last else ""
-        nodes.append(f"""<g class="node" style="animation-delay:{d:.2f}s">
-  <text x="{x:.0f}" y="{ly - 34}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" text-anchor="middle" letter-spacing="1">{m}</text>
-  {dot}<circle cx="{x:.0f}" cy="{ly}" r="13" fill="{BG1}" stroke="{c}" stroke-width="2.5" {'stroke-dasharray="4 4"' if last else ''}/>
-  <circle cx="{x:.0f}" cy="{ly}" r="5" fill="{c}"/>
-  <text x="{x:.0f}" y="{ly + 46}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle">{escape(t)}</text>
-  <text x="{x:.0f}" y="{ly + 70}" font-family="{SANS}" font-size="13" fill="{MUTED}" text-anchor="middle">{escape(sub[0])}</text>
-  <text x="{x:.0f}" y="{ly + 88}" font-family="{SANS}" font-size="13" fill="{MUTED}" text-anchor="middle">{escape(sub[1])}</text>
-</g>""")
-    style = f"""
-.track {{ transform-box: fill-box; transform-origin: left center; animation: grow 1.8s {EASE} .2s both; }}
-@keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
-.node {{ animation: rise .7s {EASE} both; }}
-@keyframes rise {{ from {{ opacity: 0; transform: translateY(12px); }} to {{ opacity: 1; transform: none; }} }}
-.pulse {{ transform-box: fill-box; transform-origin: center; animation: pulse 2s ease-out infinite; }}
-@keyframes pulse {{ from {{ opacity: .6; transform: scale(1); }} to {{ opacity: 0; transform: scale(2.6); }} }}
-.travel {{ animation: travel 6s ease-in-out 2s infinite; }}
-@keyframes travel {{ from {{ transform: translateX(0); opacity: 0; }} 10%, 85% {{ opacity: 1; }} to {{ transform: translateX({x1 - x0 - step:.0f}px); opacity: 0; }} }}"""
-    body = f"""
-<defs>
-  <linearGradient id="t" x1="0" y1="0" x2="1" y2="0">{stops(RING)}</linearGradient>
-  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{BG1}"/><stop offset="1" stop-color="{BG0}"/></linearGradient>
-  <radialGradient id="dot"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient>
-</defs>
-<rect width="{W}" height="{H}" rx="24" fill="url(#bg)"/>
-<rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="23.25" fill="none" stroke="{LINE}"/>
-<text x="40" y="44" font-family="{MONO}" font-size="13" fill="{DIM}">git log --oneline --graph  <tspan fill="{AZURE}">my-journey</tspan></text>
-<rect x="{x0}" y="{ly - 1.5}" width="{x1 - x0 - step:.0f}" height="3" rx="1.5" fill="url(#t)" class="track"/>
-<line x1="{x1 - step:.0f}" y1="{ly}" x2="{x1}" y2="{ly}" stroke="{CYAN}" stroke-width="2" stroke-dasharray="3 7" stroke-linecap="round" opacity=".7"/>
-<circle class="travel" cx="{x0}" cy="{ly}" r="7" fill="url(#dot)"/>
-{''.join(nodes)}
-"""
-    out("journey.svg", svg(W, H, style, body, "Kasundi's journey: Feb 2026 first repos; Mar Flutter and React; Apr GoodDeeds and PAS; Jun Spring Boot and GitHub Actions; Aug TalentBridge ATS live; Sep Ceylon Petals and hotel AI agent; next an internship and NLP research"))
-
-
-# =====================================================================================
 # DIVIDER + FOOTER
 # =====================================================================================
 def divider():
@@ -528,4 +352,4 @@ def footer():
 
 
 if __name__ == "__main__":
-    hero(); about(); galaxy(); featured(); timeline(); divider(); footer()
+    hero(); galaxy(); featured(); divider(); footer()
