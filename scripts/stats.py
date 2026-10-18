@@ -2,9 +2,11 @@
 
 usage: GITHUB_TOKEN=... python stats.py <out dir>
 Writes, for .github/workflows/stats.yml to publish on the `output` branch:
-  contributions-dark.svg / contributions-light.svg  GitHub-style chart with a snake
+  contributions-dark.svg / contributions-light.svg  compact GitHub-style chart, green snake eating the squares
   streak.svg                                        total, current and longest streak (all years)
   languages.svg                                     most used languages across your own repos
+and, inside the repo itself (committed to main by the same workflow):
+  assets/tiles, assets/chart, README.md             plain chart with a hover tooltip on every square
 """
 import os, sys
 from datetime import date, datetime, timedelta, timezone
@@ -15,6 +17,7 @@ import theme as th  # noqa: E402
 from gh import CONFIG, OWNER, graphql, languages, my_work, owned_repos  # noqa: E402
 
 OUT = sys.argv[1]
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TODAY = datetime.now(timezone.utc).date()   # replaced in main() by the last day of GitHub's calendar (your timezone)
 
 QUERY = """query($login: String!) { user(login: $login) { contributionsCollection { contributionCalendar {
@@ -24,13 +27,13 @@ LEVEL = {"NONE": 0, "FIRST_QUARTILE": 1, "SECOND_QUARTILE": 2, "THIRD_QUARTILE":
 # GitHub's own colours
 THEMES = {
     "dark": dict(bg="#0d1117", border="#30363d", text="#e6edf3", muted="#8b949e", outline="#ffffff", outline_op=".05",
-                 levels=["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]),
+                 levels=["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"], snake="#b8f34a", snake_edge="#0d1117"),
     "light": dict(bg="#ffffff", border="#d0d7de", text="#1f2328", muted="#59636e", outline="#1b1f23", outline_op=".06",
-                  levels=["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]),
+                  levels=["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"], snake="#4d9a1e", snake_edge="#ffffff"),
 }
 FONT = "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif"
 CELL, STEP = 10, 13
-SNAKE, SNAKE_LENGTH = "#38bdf8", 4                # blue snake to match the profile theme
+SNAKE_LENGTH = 4
 SNAKE_SECONDS, SNAKE_PAUSE = 24, 2.5              # one sweep of the whole year, then a short pause
 
 
@@ -38,14 +41,33 @@ def fetch():
     return graphql(QUERY, login=OWNER)["user"]["contributionsCollection"]["contributionCalendar"]
 
 
-def render(cal, t, name):
+def day_label(d):
+    n, dt = d["contributionCount"], date.fromisoformat(d["date"])
+    suffix = "th" if 10 <= dt.day % 100 <= 20 else {1: "st", 2: "nd", 3: "rd"}.get(dt.day % 10, "th")
+    return f'{n or "No"} contribution{"" if n == 1 else "s"} on {dt.strftime("%B")} {dt.day}{suffix}.'
+
+
+def month_marks(weeks):
+    """(week index, 'Oct') for every month label GitHub would draw."""
+    marks, last = [], -9
+    for wi, week in enumerate(weeks):
+        first = date.fromisoformat(week["contributionDays"][0]["date"])
+        if wi == 0 or first.day <= 7:                 # GitHub labels the week a month starts in
+            if wi - last >= 3 and (wi > 0 or first.day <= 14):
+                marks.append((wi, first.strftime("%b")))
+                last = wi
+    return marks
+
+
+# =====================================================================================
+# snake chart — compact, green snake that eats the squares, for the "On GitHub" section
+# =====================================================================================
+def render_snake(cal, t):
     weeks = cal["weeks"]
-    total = cal["totalContributions"]
-    left, pad = 36, 16                           # day-label column, inner padding
-    top_title = 34                               # heading baseline — inside the box, on its solid background
-    grid_x, grid_y = pad + left, top_title + 38  # month labels sit between heading and grid
+    pad, left = 12, 30
+    grid_x, grid_y = pad + left, pad + 20             # month labels sit above the grid
     W = grid_x + len(weeks) * STEP - 3 + pad
-    H = grid_y + 7 * STEP - 3 + 14 + 10 + pad + 1
+    H = grid_y + 7 * STEP - 3 + pad
 
     # snake route: down one week column, up the next, through every day
     route = []
@@ -57,54 +79,134 @@ def render(cal, t, name):
     total_s = moving + SNAKE_PAUSE
     f_end = moving / total_s
 
-    cells, months, last_label = [], [], -9
-    for wi, week in enumerate(weeks):
-        first = date.fromisoformat(week["contributionDays"][0]["date"])
-        if wi == 0 or first.day <= 7:                 # GitHub labels the week a month starts in
-            if wi - last_label >= 3 and (wi > 0 or first.day <= 14):
-                months.append(f'<text x="{grid_x + wi * STEP}" y="{grid_y - 8}" font-size="12" fill="{t["text"]}">{first.strftime("%b")}</text>')
-                last_label = wi
+    months = "".join(f'<text x="{grid_x + wi * STEP}" y="{grid_y - 7}" font-size="11" fill="{t["text"]}">{m}</text>'
+                     for wi, m in month_marks(weeks))
+    css, cells = [], []
     for i, (wi, d) in enumerate(route):
         x, y = grid_x + wi * STEP, grid_y + d["weekday"] * STEP
-        n, lvl = d["contributionCount"], LEVEL[d["contributionLevel"]]
+        lvl = LEVEL[d["contributionLevel"]]
         colour = t["levels"][lvl]
-        label = f'{n or "No"} contribution{"" if n == 1 else "s"} on {date.fromisoformat(d["date"]).strftime("%B %-d" if os.name != "nt" else "%B %#d")}'
-        cells.append(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{colour}"'
-                     f' stroke="{t["outline"]}" stroke-opacity="{t["outline_op"]}"><title>{escape(label)}</title></rect>')
+        cls = ""
+        if lvl:   # eaten when the head arrives, back during the pause (CSS animation works wherever the SVG is an <img>)
+            eaten, back = 100 * (i + 1) * T_STEP / total_s, 100 * (moving + SNAKE_PAUSE * .5) / total_s
+            css.append(f".e{i}{{animation:e{i} {total_s:.2f}s step-end infinite}}"
+                       f"@keyframes e{i}{{0%{{fill:{colour}}}{eaten:.2f}%{{fill:{t['levels'][0]}}}{back:.2f}%{{fill:{colour}}}}}")
+            cls = f' class="e{i}"'
+        cells.append(f'<rect{cls} x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{colour}"'
+                     f' stroke="{t["outline"]}" stroke-opacity="{t["outline_op"]}"/>')
 
     path = "M" + " L".join(f"{grid_x + wi * STEP + CELL / 2},{grid_y + d['weekday'] * STEP + CELL / 2}" for wi, d in route)
     snake = []
     for k in range(SNAKE_LENGTH):                     # head first, body trails one cell behind each
         size = CELL - k * 1.2
         snake.append(
-            f'<rect x="{-size / 2:.1f}" y="{-size / 2:.1f}" width="{size:.1f}" height="{size:.1f}" rx="3" fill="{SNAKE}" '
-            f'fill-opacity="{1 - k * .18:.2f}" opacity="0">'
+            f'<rect x="{-size / 2:.1f}" y="{-size / 2:.1f}" width="{size:.1f}" height="{size:.1f}" rx="3" fill="{t["snake"]}" '
+            f'stroke="{t["snake_edge"]}" stroke-width="1.2" fill-opacity="{1 - k * .15:.2f}" opacity="0">'
             f'<animateMotion path="{path}" dur="{total_s:.2f}s" begin="{k * T_STEP:.3f}s" repeatCount="indefinite" '
             f'calcMode="linear" keyPoints="0;1;1" keyTimes="0;{f_end:.4f};1"/>'
             f'<animate attributeName="opacity" dur="{total_s:.2f}s" begin="{k * T_STEP:.3f}s" repeatCount="indefinite" '
             f'calcMode="discrete" values="1;0" keyTimes="0;{f_end:.4f}"/></rect>')
-    cells.append("".join(reversed(snake)))           # head drawn on top
 
-    days = "".join(f'<text x="{pad}" y="{grid_y + r * STEP + 9}" font-size="12" fill="{t["text"]}">{n}</text>'
+    days = "".join(f'<text x="{pad}" y="{grid_y + r * STEP + 9}" font-size="11" fill="{t["text"]}">{n}</text>'
                    for r, n in ((1, "Mon"), (3, "Wed"), (5, "Fri")))
-
-    ly = grid_y + 7 * STEP - 3 + 14                  # legend row
-    lx = W - pad - 34 - 5 * STEP
-    legend = (f'<text x="{lx - 6}" y="{ly + 9}" font-size="12" fill="{t["muted"]}" text-anchor="end">Less</text>'
-              + "".join(f'<rect x="{lx + i * STEP}" y="{ly}" width="{CELL}" height="{CELL}" rx="2" fill="{c}" stroke="{t["outline"]}" stroke-opacity="{t["outline_op"]}"/>'
-                        for i, c in enumerate(t["levels"]))
-              + f'<text x="{lx + 5 * STEP + 3}" y="{ly + 9}" font-size="12" fill="{t["muted"]}">More</text>')
-    learn = f'<text x="{grid_x}" y="{ly + 9}" font-size="12" fill="{t["muted"]}">Learn how we count contributions</text>'
-
-    heading = f'{total:,} contribution{"" if total == 1 else "s"} in the last year'
+    heading = f'{cal["totalContributions"]:,} contributions in the last year'
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{heading}">'
-            f'<title>{heading}</title>'
+            f'<title>{heading}</title><style>{"".join(css)}</style>'
             f'<g font-family="{FONT}">'
             f'<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="6" fill="{t["bg"]}" stroke="{t["border"]}"/>'
-            f'<text x="{pad}" y="{top_title}" font-size="16" fill="{t["text"]}">'
-            f'<tspan font-weight="700" fill="{t["levels"][4 if name == "dark" else 3]}">{total:,}</tspan>'
-            f' contribution{"" if total == 1 else "s"} in the last year</text>'
-            f'{"".join(months)}{days}{"".join(cells)}{learn}{legend}</g></svg>\n')
+            f'{months}{days}{"".join(cells)}{"".join(reversed(snake))}</g></svg>\n')
+
+
+# =====================================================================================
+# plain chart with hover text — 7 rows of tiny images, each with a title like GitHub's tooltip
+# (GitHub shows README images as pictures, so per-square hover needs one <img title=…> per day)
+# =====================================================================================
+TW, TH, GUT = 14, 19, 30                               # tile width/height (height fits <pre>'s 19.7px line), gutter width
+RECT_W, RECT_H = 11, 15
+TILE_THEMES = {
+    "d": dict(levels=["#232b36", "#0e4429", "#006d32", "#26a641", "#39d353"], text="#e6edf3", muted="#8b949e", edge="#ffffff", edge_op=".05"),
+    "l": dict(levels=["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"], text="#1f2328", muted="#59636e", edge="#1b1f23", edge_op=".06"),
+}
+MODE = {"d": "gh-dark-mode-only", "l": "gh-light-mode-only"}
+
+
+def tile_svg(w, h, body):
+    return f'<svg xmlns="http://www.w3.org/2000/svg" width="{w}" height="{h}" viewBox="0 0 {w} {h}">{body}</svg>\n'
+
+
+def square(x, y, colour, edge, edge_op):
+    return (f'<rect x="{x}" y="{y}" width="{RECT_W}" height="{RECT_H}" rx="2.5" fill="{colour}" '
+            f'stroke="{edge}" stroke-opacity="{edge_op}"/>')
+
+
+def write_tiles(root):
+    """Static pieces: one tile per contribution level and theme, weekday labels, an empty tile."""
+    d = os.path.join(root, "assets", "tiles")
+    os.makedirs(d, exist_ok=True)
+    for k, t in TILE_THEMES.items():
+        for lvl, colour in enumerate(t["levels"]):
+            save_to(os.path.join(d, f"{k}{lvl}.svg"), tile_svg(TW, TH, square((TW - RECT_W) / 2, (TH - RECT_H) / 2, colour, t["edge"], t["edge_op"])))
+        for name in ("Mon", "Wed", "Fri"):
+            save_to(os.path.join(d, f"{k}-{name.lower()}.svg"),
+                    tile_svg(GUT, TH, f'<text x="0" y="{TH / 2 + 4.2}" font-size="11" font-family="{FONT}" fill="{t["text"]}">{name}</text>'))
+    save_to(os.path.join(d, "blank.svg"), tile_svg(TW, TH, ""))
+    save_to(os.path.join(d, "gutter.svg"), tile_svg(GUT, TH, ""))
+
+
+def write_rows(root, weeks):
+    """Month row and Less/More legend: depend on today's date, so rebuilt every run."""
+    d = os.path.join(root, "assets", "chart")
+    os.makedirs(d, exist_ok=True)
+    width = GUT + len(weeks) * TW
+    for k, t in TILE_THEMES.items():
+        months = "".join(f'<text x="{GUT + wi * TW}" y="{TH / 2 + 4.2}" font-size="11" font-family="{FONT}" fill="{t["text"]}">{m}</text>'
+                         for wi, m in month_marks(weeks))
+        save_to(os.path.join(d, f"months-{k}.svg"), tile_svg(width, TH, months))
+        lx = width - (5 * TW + 70)
+        legend = (f'<text x="{lx}" y="{TH / 2 + 4.2}" font-size="11" font-family="{FONT}" fill="{t["muted"]}">Less</text>'
+                  + "".join(square(lx + 30 + i * TW + (TW - RECT_W) / 2, (TH - RECT_H) / 2, c, t["edge"], t["edge_op"]) for i, c in enumerate(t["levels"]))
+                  + f'<text x="{lx + 34 + 5 * TW}" y="{TH / 2 + 4.2}" font-size="11" font-family="{FONT}" fill="{t["muted"]}">More</text>')
+        save_to(os.path.join(d, f"legend-{k}.svg"), tile_svg(width, TH, legend))
+
+
+def chart_block(cal):
+    """README markup for the hoverable chart (both GitHub themes)."""
+    weeks = cal["weeks"]
+    total = cal["totalContributions"]
+    by = [{d["weekday"]: d for d in w["contributionDays"]} for w in weeks]
+
+    def img(src, k, title="", w=TW):
+        t = f' title="{title}"' if title else ""
+        return f'<img src="./assets/{src}#{MODE[k]}"{t} width="{w}" height="{TH}" align="top">'
+
+    rows = [[] for _ in range(9)]
+    for k in ("d", "l"):
+        rows[0].append(img(f"chart/months-{k}.svg", k, w=GUT + len(weeks) * TW))
+        for r in range(7):
+            rows[r + 1].append(img(f"tiles/{k}-{('mon', 'wed', 'fri')[(r - 1) // 2]}.svg", k, w=GUT) if r in (1, 3, 5)
+                               else img("tiles/gutter.svg", k, w=GUT))
+            for wd in by:
+                rows[r + 1].append(img(f"tiles/{k}{LEVEL[wd[r]['contributionLevel']]}.svg", k, escape(day_label(wd[r])))
+                                   if r in wd else img("tiles/blank.svg", k))
+        rows[8].append(img(f"chart/legend-{k}.svg", k, w=GUT + len(weeks) * TW))
+    body = ["".join(r) for r in rows]
+    # each theme's block is its own line group; GitHub hides the one that doesn't match the viewer's theme
+    return (f'**{total:,}** contributions in the last year\n\n<pre>\n' + "\n".join(body) + "\n</pre>")
+
+
+def splice_readme(block):
+    path = os.path.join(ROOT, "README.md")
+    s = open(path, encoding="utf-8").read()
+    start, end = "<!-- CONTRIB-CHART:START -->", "<!-- CONTRIB-CHART:END -->"
+    a, b = s.find(start), s.find(end)
+    if a < 0 or b < 0:
+        print("README has no CONTRIB-CHART markers — skipping chart block")
+        return
+    new = s[:a + len(start)] + "\n" + block + "\n" + s[b:]
+    if new != s:
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(new)
+        print("README chart block updated")
 
 
 # =====================================================================================
@@ -261,7 +363,11 @@ def languages_card(totals, top=6):
 
 
 def save(name, content):
-    with open(os.path.join(OUT, name), "w", encoding="utf-8", newline="\n") as f:
+    save_to(os.path.join(OUT, name), content)
+
+
+def save_to(path, content):
+    with open(path, "w", encoding="utf-8", newline="\n") as f:
         f.write(content)
 
 
@@ -271,7 +377,10 @@ def main():
     cal = fetch()
     TODAY = max(date.fromisoformat(d["date"]) for w in cal["weeks"] for d in w["contributionDays"])
     for name, theme in THEMES.items():
-        save(f"contributions-{name}.svg", render(cal, theme, name))
+        save(f"contributions-{name}.svg", render_snake(cal, theme))
+    write_tiles(ROOT)
+    write_rows(ROOT, cal["weeks"])
+    splice_readme(chart_block(cal))
     streak, (total, cur, best) = streak_card(history())
     save("streak.svg", streak)
     totals = language_totals(my_work(owned_repos()))

@@ -83,26 +83,26 @@ def hero():
     rnd = random.Random(11)
     W = 1200
     AV = base64.b64encode(open(os.path.join(OUT, "avatar.jpg"), "rb").read()).decode()
-    acx, acy, ar = 200, 168, 100              # animated avatar
+    acx, acy, ar = 200, 150, 92              # animated avatar
     tx = 392                                  # right-hand text column
-    pill_y = 312
+    pill_y = 250
     px, pw = 60, 1080                         # glance panel
-    row_h, panel_top = 46, 372
+    row_h, panel_top = 44, 306
     panel_h = 12 + row_h * len(GLANCE) + 8
-    H = panel_top + panel_h + 64
+    H = panel_top + panel_h + 56
 
-    # ---- role pills, centred full width under the avatar row ----
-    fs, gap = 16, 14
-    widths = [tw(t, fs) * 1.08 + fs + 54 for _, t, _ in TAGLINE]
-    x = (W - sum(widths) - gap * (len(widths) - 1)) / 2
+    # ---- role pills, in the text column right under the paragraph ----
+    fs, gap = 13.5, 10
+    widths = [tw(t, fs) * 1.08 + fs + 38 for _, t, _ in TAGLINE]
+    x = tx
     pills = []
     for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
         pills.append(
             f'<g class="pop" style="animation-delay:{1.15 + i * .12:.2f}s">'
-            f'<rect class="glowpill" style="animation-delay:{i * 1.3:.1f}s" x="{x:.0f}" y="{pill_y}" width="{w:.0f}" height="40" rx="20" '
+            f'<rect class="glowpill" style="animation-delay:{i * 1.3:.1f}s" x="{x:.0f}" y="{pill_y}" width="{w:.0f}" height="34" rx="17" '
             f'fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
-            f'<text x="{x + 22:.0f}" y="{pill_y + 26}" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
-            f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
+            f'<text x="{x + 16:.0f}" y="{pill_y + 22}" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<tspan>{emo}</tspan><tspan dx="7" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
 
     # ---- intro paragraph, each line wipes in like it's being typed ----
@@ -110,7 +110,7 @@ def hero():
     intro = []
     for i, line in enumerate(INTRO):
         spans = "".join(f'<tspan{bold if b else ""}>{escape(t)}</tspan>' for t, b in line)
-        intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{196 + i * 27}" '
+        intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{176 + i * 26}" '
                      f'font-family="{SANS}" font-size="17" fill="{MUTED}">{spans}</text>')
 
     # ---- at-a-glance rows ----
@@ -154,8 +154,8 @@ def hero():
 
     # ---- orbiting satellites around the avatar ----
     sats = []
-    for i, (rad, dur, size, col, start) in enumerate([(ar + 30, 9, 5, CYAN, 0), (ar + 30, 9, 3.5, SKY, 180),
-                                                      (ar + 44, 16, 4, INDIGO, 90), (ar + 44, 16, 2.5, ICE, 270)]):
+    for i, (rad, dur, size, col, start) in enumerate([(ar + 27, 9, 5, CYAN, 0), (ar + 27, 9, 3.5, SKY, 180),
+                                                      (ar + 38, 16, 4, INDIGO, 90), (ar + 38, 16, 2.5, ICE, 270)]):
         sats.append(f'<g class="orb{i}" style="transform:rotate({start}deg)"><circle cx="{acx}" cy="{acy - rad}" r="{size}" fill="{col}"/>'
                     f'<circle cx="{acx}" cy="{acy - rad}" r="{size * 2.6}" fill="{col}" opacity=".18"/></g>')
 
@@ -219,7 +219,7 @@ def hero():
 
 @media (prefers-reduced-motion: reduce) {{ .ember, .ripple, .comet, .scan, .beam {{ display: none; }} }}"""
 
-    name = f'x="{tx - 2}" y="128" font-family="{SANS}" font-size="64" font-weight="800" letter-spacing="-1.5"'
+    name = f'x="{tx - 2}" y="112" font-family="{SANS}" font-size="64" font-weight="800" letter-spacing="-1.5"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
@@ -270,13 +270,13 @@ def hero():
 
 <!-- name + intro -->
 <g class="rise" style="animation-delay:.2s">
-  <text x="{tx}" y="62" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}"><tspan class="wave">👋</tspan> Hi, I'm</text>
+  <text x="{tx}" y="50" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}"><tspan class="wave">👋</tspan> Hi, I'm</text>
 </g>
 <g class="reveal">
   <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="{tx - 40}" y="60" width="150" height="90" fill="url(#shineG)" transform="translate(-220,0)"/></g>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="{tx - 40}" y="46" width="150" height="86" fill="url(#shineG)" transform="translate(-220,0)"/></g>
 </g>
-<rect class="line" x="{tx}" y="146" width="420" height="2.5" rx="1.25" fill="url(#uline)"/>
+<rect class="line" x="{tx}" y="130" width="420" height="2.5" rx="1.25" fill="url(#uline)"/>
 {''.join(intro)}
 {''.join(pills)}
 
@@ -289,7 +289,7 @@ def hero():
 {''.join(rows)}
 
 <g class="rise" style="animation-delay:2.4s">
-  <text x="600" y="{panel_top + panel_h + 42}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+  <text x="600" y="{panel_top + panel_h + 37}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "
