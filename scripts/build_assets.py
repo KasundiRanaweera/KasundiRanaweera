@@ -86,10 +86,12 @@ def hero():
     acx, acy, ar = 200, 150, 92              # animated avatar
     tx = 392                                  # right-hand text column
     pill_y = 250
-    px, pw = 60, 1080                         # glance panel
-    row_h, panel_top = 44, 306
-    panel_h = 12 + row_h * len(GLANCE) + 8
-    H = panel_top + panel_h + 56
+    px, pw = 60, 1080                         # glance grid
+    gap, card_h, goal_h = 10, 70, 40          # goal_h: room for the plain Goal sentence under the cards
+    cw = (pw - gap) // 2
+    panel_top = 300
+    panel_h = card_h * 2 + goal_h + gap
+    H = panel_top + panel_h + 54
 
     # ---- role pills, in the text column right under the paragraph ----
     fs, gap = 13.5, 10
@@ -113,31 +115,42 @@ def hero():
         intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{176 + i * 26}" '
                      f'font-family="{SANS}" font-size="17" fill="{MUTED}">{spans}</text>')
 
-    # ---- at-a-glance rows ----
+    # ---- at-a-glance mini-cards: two per row, Goal as a slim full-width card ----
+    spots = {"Interests": (0, 0), "Learning": (1, 0), "Research Interests": (0, 1), "Open to": (1, 1)}
     rows = []
     for i, (icon, label, c, value) in enumerate(GLANCE):
-        y = panel_top + 12 + i * row_h
-        cy = y + row_h / 2
-        d = 1.6 + i * .12
-        parts = [f'<g class="slide" style="animation-delay:{d:.2f}s">']
-        if i:
-            parts.append(f'<line x1="{px + 24}" y1="{y}" x2="{px + pw - 24}" y2="{y}" stroke="{TEXT}" stroke-opacity=".06"/>')
-        parts.append(f'<g class="icon" style="animation-delay:{d + .15:.2f}s">'
-                     f'<rect x="{px + 24}" y="{cy - 16}" width="32" height="32" rx="10" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
-                     f'<g transform="translate({px + 31},{cy - 9}) scale(.75)" fill="none" stroke="{c}" stroke-width="2" '
-                     f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g></g>'
-                     f'<text x="{px + 72}" y="{cy + 5}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" '
-                     f'letter-spacing="1.2">{escape(label.upper())}</text>')
-        vx = px + 300
-        if isinstance(value, str):
-            parts.append(f'<text x="{vx}" y="{cy + 6}" font-family="{SANS}" font-size="16" fill="{TEXT}">{escape(value)}</text>')
+        if label == "Goal":                              # written as a normal sentence, not a card
+            gy = panel_top + card_h * 2 + gap + 28
+            rows.append(f'<g class="rise" style="animation-delay:{1.5 + i * .12:.2f}s">'
+                        f'<text x="600" y="{gy}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle">'
+                        f'<tspan>🎯</tspan> Goal: {escape(value)}</text></g>')
+            continue
+        col, rw = spots[label]
+        full = col is None
+        x0 = px if full else px + col * (cw + gap)
+        y0 = panel_top + (0 if rw == 0 else card_h + gap if rw == 1 else 2 * card_h + 2 * gap)
+        w0, h0 = (pw, goal_h) if full else (cw, card_h)
+        d = 1.5 + i * .12
+        tile_y = y0 + (h0 - 24) / 2 if full else y0 + 9
+        parts = [f'<g class="slide" style="animation-delay:{d:.2f}s">',
+                 f'<rect x="{x0}" y="{y0}" width="{w0}" height="{h0}" rx="14" fill="url(#cardBg{i})" stroke="{c}" stroke-opacity=".3"/>',
+                 f'<rect class="bar" x="{x0}" y="{y0 + 12}" width="3" height="{h0 - 24}" rx="1.5" fill="{c}"/>',
+                 f'<g class="icon" style="animation-delay:{d + .15:.2f}s">'
+                 f'<rect x="{x0 + 16}" y="{tile_y}" width="24" height="24" rx="8" fill="{c}" fill-opacity=".14" stroke="{c}" stroke-opacity=".45"/>'
+                 f'<g transform="translate({x0 + 22},{tile_y + 6}) scale(.5)" fill="none" stroke="{c}" stroke-width="2.4" '
+                 f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g></g>',
+                 f'<text x="{x0 + 50}" y="{tile_y + 16.5}" font-family="{MONO}" font-size="11.5" font-weight="700" fill="{c}" '
+                 f'letter-spacing="1.3">{escape(label.upper())}</text>']
+        if isinstance(value, str):                       # the Goal sentence sits on the same line as its label
+            parts.append(f'<text x="{x0 + 112}" y="{tile_y + 17}" font-family="{SANS}" font-size="14.5" fill="{TEXT}">{escape(value)}</text>')
         else:
+            vx = x0 + 16
             for k, chip in enumerate(value):
-                w = tw(chip, 14.5) * 1.08 + 28
+                cwid = tw(chip, 12.5) * 1.08 + 18
                 parts.append(f'<g class="pop" style="animation-delay:{d + .2 + k * .07:.2f}s">'
-                             f'<rect x="{vx:.0f}" y="{cy - 14}" width="{w:.0f}" height="28" rx="14" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
-                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="14.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text></g>')
-                vx += w + 9
+                             f'<rect x="{vx:.0f}" y="{y0 + 41}" width="{cwid:.0f}" height="24" rx="12" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".32"/>'
+                             f'<text x="{vx + cwid / 2:.0f}" y="{y0 + 57}" font-family="{SANS}" font-size="12.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text></g>')
+                vx += cwid + 6
         parts.append("</g>")
         rows.append("".join(parts))
 
@@ -214,6 +227,8 @@ def hero():
 @keyframes comet {{ from {{ stroke-dashoffset: 0; }} to {{ stroke-dashoffset: -{p_len}; }} }}
 .scan {{ animation: scan 6s ease-in-out 3s infinite; }}
 @keyframes scan {{ 0% {{ transform: translateY(0); opacity: 0; }} 8% {{ opacity: 1; }} 70% {{ transform: translateY({panel_h - 40}px); opacity: 1; }} 78%, 100% {{ transform: translateY({panel_h - 40}px); opacity: 0; }} }}
+.bar {{ animation: barGlow 3.6s ease-in-out 2.5s infinite alternate; }}
+@keyframes barGlow {{ from {{ opacity: .55; }} to {{ opacity: 1; }} }}
 .sparkle {{ transform-box: fill-box; transform-origin: center; animation: sparkle 2.4s ease-in-out infinite; }}
 @keyframes sparkle {{ 0%, 100% {{ transform: scale(1) rotate(0); }} 50% {{ transform: scale(1.25) rotate(20deg); }} }}
 
@@ -239,6 +254,7 @@ def hero():
   <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="{TEXT}"/></pattern>
   <clipPath id="card"><rect width="{W}" height="{H}" rx="28"/></clipPath>
   <clipPath id="face"><circle cx="{acx}" cy="{acy}" r="{ar}"/></clipPath>
+  {"".join(f'<linearGradient id="cardBg{i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{c}" stop-opacity=".13"/><stop offset="1" stop-color="{BG0}" stop-opacity=".55"/></linearGradient>' for i, (_, _, c, _) in enumerate(GLANCE))}
   <clipPath id="panelC"><rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20"/></clipPath>
   <mask id="nameMask"><text {name} fill="#fff">Kasundi Ranaweera</text></mask>
 </defs>
@@ -281,15 +297,10 @@ def hero():
 {''.join(pills)}
 
 <!-- at a glance -->
-<g class="rise" style="animation-delay:1.45s">
-  <rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20" fill="{BG0}" fill-opacity=".55" stroke="url(#panelB)" stroke-width="1.5"/>
-  <rect class="comet" x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20" fill="none" stroke="{SKY}" stroke-width="2" stroke-linecap="round" opacity=".85"/>
-  <g clip-path="url(#panelC)"><rect class="scan" x="{px}" y="{panel_top + 6}" width="{pw}" height="34" fill="url(#scanG)"/></g>
-</g>
 {''.join(rows)}
 
 <g class="rise" style="animation-delay:2.4s">
-  <text x="600" y="{panel_top + panel_h + 37}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+  <text x="600" y="{panel_top + panel_h + 35}" font-family="{SANS}" font-size="16" font-style="italic" font-weight="700" fill="{TEXT}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "
