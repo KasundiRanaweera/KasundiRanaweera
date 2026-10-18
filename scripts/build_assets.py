@@ -79,121 +79,217 @@ GLANCE = [
 
 
 def hero():
+    import random
+    rnd = random.Random(11)
     W = 1200
-    px, pw = 90, 1020                     # glance panel
-    row_h, panel_top = 46, 290
-    panel_h = 10 + row_h * len(GLANCE) + 6
-    H = panel_top + panel_h + 62
-    petal_svg, petal_css = petals(18, W, H, x_min=20)
+    AV = base64.b64encode(open(os.path.join(OUT, "avatar.jpg"), "rb").read()).decode()
+    acx, acy, ar = 200, 168, 100              # animated avatar
+    tx = 392                                  # right-hand text column
+    pill_y = 312
+    px, pw = 60, 1080                         # glance panel
+    row_h, panel_top = 46, 372
+    panel_h = 12 + row_h * len(GLANCE) + 8
+    H = panel_top + panel_h + 64
 
-    # role pills, centred as one row
-    fs, gap = 17, 14
-    widths = [tw(t, fs) * 1.08 + fs + 56 for _, t, _ in TAGLINE]
+    # ---- role pills, centred full width under the avatar row ----
+    fs, gap = 16, 14
+    widths = [tw(t, fs) * 1.08 + fs + 54 for _, t, _ in TAGLINE]
     x = (W - sum(widths) - gap * (len(widths) - 1)) / 2
     pills = []
     for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
         pills.append(
-            f'<g class="rise" style="animation-delay:{0.45 + i * 0.1:.2f}s">'
-            f'<rect x="{x:.0f}" y="146" width="{w:.0f}" height="40" rx="20" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
-            f'<text x="{x + 22:.0f}" y="172" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<g class="pop" style="animation-delay:{1.15 + i * .12:.2f}s">'
+            f'<rect class="glowpill" style="animation-delay:{i * 1.3:.1f}s" x="{x:.0f}" y="{pill_y}" width="{w:.0f}" height="40" rx="20" '
+            f'fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'<text x="{x + 22:.0f}" y="{pill_y + 26}" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
             f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
 
-    # intro paragraph
-    intro = []
+    # ---- intro paragraph, each line wipes in like it's being typed ----
     bold = f' font-weight="700" fill="{TEXT}"'
+    intro = []
     for i, line in enumerate(INTRO):
         spans = "".join(f'<tspan{bold if b else ""}>{escape(t)}</tspan>' for t, b in line)
-        intro.append(f'<text x="600" y="{220 + i * 26}" font-family="{SANS}" font-size="17.5" fill="{MUTED}" text-anchor="middle">{spans}</text>')
+        intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{196 + i * 27}" '
+                     f'font-family="{SANS}" font-size="17" fill="{MUTED}">{spans}</text>')
 
-    # at-a-glance rows
+    # ---- at-a-glance rows ----
     rows = []
     for i, (icon, label, c, value) in enumerate(GLANCE):
-        y = panel_top + 10 + i * row_h           # row top
-        cy = y + row_h / 2                       # row centre line
-        parts = [f'<g class="rise" style="animation-delay:{0.9 + i * 0.1:.2f}s">']
+        y = panel_top + 12 + i * row_h
+        cy = y + row_h / 2
+        d = 1.6 + i * .12
+        parts = [f'<g class="slide" style="animation-delay:{d:.2f}s">']
         if i:
             parts.append(f'<line x1="{px + 24}" y1="{y}" x2="{px + pw - 24}" y2="{y}" stroke="{TEXT}" stroke-opacity=".06"/>')
-        parts.append(f'<rect x="{px + 24}" y="{cy - 16}" width="32" height="32" rx="10" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
+        parts.append(f'<g class="icon" style="animation-delay:{d + .15:.2f}s">'
+                     f'<rect x="{px + 24}" y="{cy - 16}" width="32" height="32" rx="10" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
                      f'<g transform="translate({px + 31},{cy - 9}) scale(.75)" fill="none" stroke="{c}" stroke-width="2" '
-                     f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g>'
+                     f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g></g>'
                      f'<text x="{px + 72}" y="{cy + 5}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" '
                      f'letter-spacing="1.2">{escape(label.upper())}</text>')
-        vx = px + 290
+        vx = px + 300
         if isinstance(value, str):
             parts.append(f'<text x="{vx}" y="{cy + 6}" font-family="{SANS}" font-size="16" fill="{TEXT}">{escape(value)}</text>')
         else:
-            for chip in value:
+            for k, chip in enumerate(value):
                 w = tw(chip, 14.5) * 1.08 + 28
-                parts.append(f'<rect x="{vx:.0f}" y="{cy - 14}" width="{w:.0f}" height="28" rx="14" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
-                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="14.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text>')
+                parts.append(f'<g class="pop" style="animation-delay:{d + .2 + k * .07:.2f}s">'
+                             f'<rect x="{vx:.0f}" y="{cy - 14}" width="{w:.0f}" height="28" rx="14" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
+                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="14.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text></g>')
                 vx += w + 9
         parts.append("</g>")
         rows.append("".join(parts))
 
-    style = f"""
-.rise {{ animation: rise .8s {EASE} both; }}
-@keyframes rise {{ from {{ opacity: 0; transform: translateY(14px); }} to {{ opacity: 1; transform: none; }} }}
-.orb {{ transform-box: fill-box; transform-origin: center; }}
-.o1 {{ animation: drift1 14s ease-in-out infinite alternate; }}
-.o2 {{ animation: drift2 17s ease-in-out infinite alternate; }}
-.o3 {{ animation: drift1 21s ease-in-out infinite alternate-reverse; }}
-@keyframes drift1 {{ to {{ transform: translate(-60px, 40px) scale(1.12); }} }}
-@keyframes drift2 {{ to {{ transform: translate(70px, -30px) scale(.92); }} }}
-.shine {{ animation: shine 6s ease-in-out 1.2s infinite; }}
-@keyframes shine {{ 0% {{ transform: translateX(-200px); }} 45%, 100% {{ transform: translateX(1300px); }} }}
-.wave {{ transform-box: fill-box; transform-origin: 70% 80%; animation: wave 2.4s ease-in-out .8s infinite; }}
-@keyframes wave {{ 0%, 60%, 100% {{ transform: rotate(0); }} 10%, 30% {{ transform: rotate(16deg); }} 20%, 40% {{ transform: rotate(-8deg); }} }}
-.line {{ transform-box: fill-box; transform-origin: center; animation: grow 1.2s {EASE} .4s both; }}
-@keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
-@media (prefers-reduced-motion: reduce) {{ .petal {{ display: none; }} }}
-{petal_css}"""
+    # ---- ambient particles: twinkling stars + embers rising ----
+    stars = "".join(f'<circle class="tw" cx="{rnd.randint(10, W - 10)}" cy="{rnd.randint(10, H - 10)}" r="{rnd.choice([.8, 1, 1.3])}" '
+                    f'fill="{ICE}" style="animation-delay:-{rnd.uniform(0, 4):.1f}s"/>' for _ in range(55))
+    embers, ember_css = [], []
+    for i in range(14):
+        ex, dur = rnd.randint(30, W - 30), rnd.uniform(9, 16)
+        ember_css.append(f".em{i}{{animation:rise{i} {dur:.1f}s linear -{rnd.uniform(0, dur):.1f}s infinite}}"
+                         f"@keyframes rise{i}{{0%{{transform:translate(0,0);opacity:0}}15%{{opacity:.8}}"
+                         f"100%{{transform:translate({rnd.randint(-40, 40)}px,-{H + 20}px);opacity:0}}}}")
+        embers.append(f'<circle class="em{i} ember" cx="{ex}" cy="{H + 10}" r="{rnd.uniform(1.2, 2.6):.1f}" fill="{rnd.choice([CYAN, SKY, INDIGO])}"/>')
 
-    name = f'x="600" y="118" font-family="{SANS}" font-size="70" font-weight="800" letter-spacing="-2" text-anchor="middle"'
+    # ---- orbiting satellites around the avatar ----
+    sats = []
+    for i, (rad, dur, size, col, start) in enumerate([(ar + 30, 9, 5, CYAN, 0), (ar + 30, 9, 3.5, SKY, 180),
+                                                      (ar + 44, 16, 4, INDIGO, 90), (ar + 44, 16, 2.5, ICE, 270)]):
+        sats.append(f'<g class="orb{i}" style="transform:rotate({start}deg)"><circle cx="{acx}" cy="{acy - rad}" r="{size}" fill="{col}"/>'
+                    f'<circle cx="{acx}" cy="{acy - rad}" r="{size * 2.6}" fill="{col}" opacity=".18"/></g>')
+
+    p_len = 2 * (pw + panel_h)                 # panel perimeter, for the travelling light
+    style = f"""
+@keyframes fadeUp {{ from {{ opacity: 0; transform: translateY(14px); }} to {{ opacity: 1; transform: none; }} }}
+.rise {{ animation: fadeUp .8s {EASE} both; }}
+.pop {{ transform-box: fill-box; transform-origin: center; animation: pop .6s {EASE} both; }}
+@keyframes pop {{ from {{ opacity: 0; transform: scale(.85); }} to {{ opacity: 1; transform: none; }} }}
+.slide {{ animation: slide .7s {EASE} both; }}
+@keyframes slide {{ from {{ opacity: 0; transform: translateX(-24px); }} to {{ opacity: 1; transform: none; }} }}
+.icon {{ transform-box: fill-box; transform-origin: center; animation: spinIn .8s {EASE} both; }}
+@keyframes spinIn {{ from {{ opacity: 0; transform: rotate(-90deg) scale(.5); }} to {{ opacity: 1; transform: none; }} }}
+.type {{ animation: type 1.1s steps(40, end) both; }}
+@keyframes type {{ from {{ clip-path: inset(0 100% 0 0); }} to {{ clip-path: inset(0 0 0 0); }} }}
+.reveal {{ animation: reveal 1.1s {EASE} .25s both; }}
+@keyframes reveal {{ from {{ clip-path: inset(0 100% 0 0); opacity: .3; }} to {{ clip-path: inset(0 0 0 0); opacity: 1; }} }}
+
+.aur {{ transform-box: fill-box; transform-origin: center; }}
+.a1 {{ animation: drift1 16s ease-in-out infinite alternate; }}
+.a2 {{ animation: drift2 19s ease-in-out infinite alternate; }}
+.a3 {{ animation: drift1 23s ease-in-out infinite alternate-reverse; }}
+@keyframes drift1 {{ to {{ transform: translate(-80px, 50px) scale(1.15); }} }}
+@keyframes drift2 {{ to {{ transform: translate(90px, -40px) scale(.9); }} }}
+.beam {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: spin 24s linear infinite; }}
+.tw {{ animation: tw 3.2s ease-in-out infinite alternate; }}
+@keyframes tw {{ from {{ opacity: .1; }} to {{ opacity: .85; }} }}
+{''.join(ember_css)}
+
+.avatar {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: avIn 1.1s {EASE} both; }}
+@keyframes avIn {{ from {{ opacity: 0; transform: scale(.7) rotate(-12deg); }} to {{ opacity: 1; transform: none; }} }}
+.float {{ animation: float 6s ease-in-out 1.1s infinite; }}
+@keyframes float {{ 0%, 100% {{ transform: translateY(0); }} 50% {{ transform: translateY(-8px); }} }}
+.spin {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: spin 18s linear infinite; }}
+.spin.rev {{ animation-duration: 28s; animation-direction: reverse; }}
+@keyframes spin {{ to {{ transform: rotate(360deg); }} }}
+.orb0, .orb1 {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: orbit 9s linear infinite; }}
+.orb1 {{ animation-delay: -4.5s; }}
+.orb2, .orb3 {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: orbit 16s linear infinite reverse; }}
+.orb3 {{ animation-delay: -8s; }}
+@keyframes orbit {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
+.ripple {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: ripple 4s ease-out infinite; }}
+@keyframes ripple {{ from {{ opacity: .55; transform: scale(1); }} to {{ opacity: 0; transform: scale(1.45); }} }}
+.halo {{ transform-box: fill-box; transform-origin: center; animation: halo 4s ease-in-out infinite alternate; }}
+@keyframes halo {{ from {{ opacity: .45; transform: scale(.95); }} to {{ opacity: .9; transform: scale(1.06); }} }}
+
+.wave {{ transform-box: fill-box; transform-origin: 70% 80%; animation: wave 2.6s ease-in-out 1s infinite; }}
+@keyframes wave {{ 0%, 60%, 100% {{ transform: rotate(0); }} 10%, 30% {{ transform: rotate(16deg); }} 20%, 40% {{ transform: rotate(-8deg); }} }}
+.shine {{ animation: shine 6s ease-in-out 1.6s infinite; }}
+@keyframes shine {{ 0% {{ transform: translateX(-220px); }} 45%, 100% {{ transform: translateX(900px); }} }}
+.line {{ transform-box: fill-box; transform-origin: left center; animation: grow 1.2s {EASE} .7s both; }}
+@keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
+.glowpill {{ animation: glow 4s ease-in-out 2s infinite; }}
+@keyframes glow {{ 0%, 70%, 100% {{ stroke-opacity: .5; fill-opacity: .1; }} 85% {{ stroke-opacity: 1; fill-opacity: .22; }} }}
+.comet {{ stroke-dasharray: 160 {p_len - 160}; animation: comet 7s linear 2s infinite; }}
+@keyframes comet {{ from {{ stroke-dashoffset: 0; }} to {{ stroke-dashoffset: -{p_len}; }} }}
+.scan {{ animation: scan 6s ease-in-out 3s infinite; }}
+@keyframes scan {{ 0% {{ transform: translateY(0); opacity: 0; }} 8% {{ opacity: 1; }} 70% {{ transform: translateY({panel_h - 40}px); opacity: 1; }} 78%, 100% {{ transform: translateY({panel_h - 40}px); opacity: 0; }} }}
+.sparkle {{ transform-box: fill-box; transform-origin: center; animation: sparkle 2.4s ease-in-out infinite; }}
+@keyframes sparkle {{ 0%, 100% {{ transform: scale(1) rotate(0); }} 50% {{ transform: scale(1.25) rotate(20deg); }} }}
+
+@media (prefers-reduced-motion: reduce) {{ .ember, .ripple, .comet, .scan, .beam {{ display: none; }} }}"""
+
+    name = f'x="{tx - 2}" y="128" font-family="{SANS}" font-size="64" font-weight="800" letter-spacing="-1.5"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
   <radialGradient id="gA"><stop offset="0" stop-color="{AZURE}" stop-opacity=".5"/><stop offset="1" stop-color="{AZURE}" stop-opacity="0"/></radialGradient>
   <radialGradient id="gC"><stop offset="0" stop-color="{CYAN}" stop-opacity=".35"/><stop offset="1" stop-color="{CYAN}" stop-opacity="0"/></radialGradient>
   <radialGradient id="gI"><stop offset="0" stop-color="#6366f1" stop-opacity=".5"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="halo"><stop offset=".55" stop-color="{AZURE}" stop-opacity=".55"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
+  <radialGradient id="beam"><stop offset="0" stop-color="{SKY}" stop-opacity=".12"/><stop offset="1" stop-color="{SKY}" stop-opacity="0"/></radialGradient>
   <linearGradient id="name" x1="0" y1="0" x2="1" y2="0">{stops(GRAD)}</linearGradient>
-  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CYAN}" stop-opacity="0"/><stop offset=".5" stop-color="{AZURE}"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
+  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">{stops(RING)}</linearGradient>
+  <linearGradient id="uline" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CYAN}"/><stop offset=".6" stop-color="{AZURE}"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
   <linearGradient id="panelB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{CYAN}" stop-opacity=".45"/><stop offset=".5" stop-color="{AZURE}" stop-opacity=".1"/><stop offset="1" stop-color="#6366f1" stop-opacity=".45"/></linearGradient>
+  <linearGradient id="scanG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{SKY}" stop-opacity="0"/><stop offset=".5" stop-color="{SKY}" stop-opacity=".07"/><stop offset="1" stop-color="{SKY}" stop-opacity="0"/></linearGradient>
   <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </linearGradient>
   <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="{TEXT}"/></pattern>
   <clipPath id="card"><rect width="{W}" height="{H}" rx="28"/></clipPath>
+  <clipPath id="face"><circle cx="{acx}" cy="{acy}" r="{ar}"/></clipPath>
+  <clipPath id="panelC"><rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20"/></clipPath>
   <mask id="nameMask"><text {name} fill="#fff">Kasundi Ranaweera</text></mask>
 </defs>
+
+<!-- background: aurora, light beam, stars, rising embers -->
 <g clip-path="url(#card)">
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
-  <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".06"/>
-  <circle class="orb o1" cx="1040" cy="40" r="320" fill="url(#gA)"/>
-  <circle class="orb o2" cx="140" cy="{H * .55:.0f}" r="300" fill="url(#gC)"/>
-  <circle class="orb o3" cx="700" cy="{H - 40}" r="280" fill="url(#gI)"/>
-  {petal_svg}
+  <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".05"/>
+  <circle class="aur a1" cx="1040" cy="40" r="330" fill="url(#gA)"/>
+  <circle class="aur a2" cx="160" cy="{H * .55:.0f}" r="300" fill="url(#gC)"/>
+  <circle class="aur a3" cx="720" cy="{H - 30}" r="300" fill="url(#gI)"/>
+  <g class="beam"><ellipse cx="{acx}" cy="{acy}" rx="560" ry="46" fill="url(#beam)"/></g>
+  {stars}
+  {''.join(embers)}
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
-<g class="rise" style="animation-delay:.05s">
-  <text x="600" y="48" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}" text-anchor="middle"><tspan class="wave">👋</tspan> Hi, I'm</text>
-</g>
-<g class="rise" style="animation-delay:.18s">
-  <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="50" width="160" height="90" fill="url(#shineG)" transform="translate(-200,0)"/></g>
-</g>
-<rect class="line" x="420" y="132" width="360" height="2" rx="1" fill="url(#ring)"/>
-{''.join(pills)}
-<g class="rise" style="animation-delay:.7s">{''.join(intro)}</g>
+<!-- animated profile -->
+<g class="avatar"><g class="float">
+  <circle class="halo" cx="{acx}" cy="{acy}" r="{ar + 22}" fill="url(#halo)"/>
+  <circle class="ripple" cx="{acx}" cy="{acy}" r="{ar + 6}" fill="none" stroke="{SKY}" stroke-width="1.5"/>
+  <circle class="ripple" style="animation-delay:2s" cx="{acx}" cy="{acy}" r="{ar + 6}" fill="none" stroke="{INDIGO}" stroke-width="1.5"/>
+  <circle class="spin" cx="{acx}" cy="{acy}" r="{ar + 16}" fill="none" stroke="url(#ring)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 11"/>
+  <circle class="spin rev" cx="{acx}" cy="{acy}" r="{ar + 8}" fill="none" stroke="url(#ring)" stroke-width="2.5" stroke-dasharray="110 36 26 36" stroke-linecap="round"/>
+  <circle cx="{acx}" cy="{acy}" r="{ar + 2}" fill="{BG0}"/>
+  <image href="data:image/jpeg;base64,{AV}" x="{acx - ar}" y="{acy - ar}" width="{2 * ar}" height="{2 * ar}" clip-path="url(#face)" preserveAspectRatio="xMidYMid slice"/>
+  {''.join(sats)}
+</g></g>
 
-<g class="rise" style="animation-delay:.8s">
+<!-- name + intro -->
+<g class="rise" style="animation-delay:.2s">
+  <text x="{tx}" y="62" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}"><tspan class="wave">👋</tspan> Hi, I'm</text>
+</g>
+<g class="reveal">
+  <text {name} fill="url(#name)">Kasundi Ranaweera</text>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="{tx - 40}" y="60" width="150" height="90" fill="url(#shineG)" transform="translate(-220,0)"/></g>
+</g>
+<rect class="line" x="{tx}" y="146" width="420" height="2.5" rx="1.25" fill="url(#uline)"/>
+{''.join(intro)}
+{''.join(pills)}
+
+<!-- at a glance -->
+<g class="rise" style="animation-delay:1.45s">
   <rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20" fill="{BG0}" fill-opacity=".55" stroke="url(#panelB)" stroke-width="1.5"/>
+  <rect class="comet" x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20" fill="none" stroke="{SKY}" stroke-width="2" stroke-linecap="round" opacity=".85"/>
+  <g clip-path="url(#panelC)"><rect class="scan" x="{px}" y="{panel_top + 6}" width="{pw}" height="34" fill="url(#scanG)"/></g>
 </g>
 {''.join(rows)}
 
-<g class="rise" style="animation-delay:1.5s">
-  <text x="600" y="{panel_top + panel_h + 40}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+<g class="rise" style="animation-delay:2.4s">
+  <text x="600" y="{panel_top + panel_h + 42}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "
