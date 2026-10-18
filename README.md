@@ -4,12 +4,27 @@
   <img src="./assets/hero.svg" width="100%" alt="Kasundi Ranaweera — 🎓 Computer Science Undergraduate | 💻 Full-Stack Developer | 🤖 AI/ML & Data Science Enthusiast | ✨ exploring, creating, improving."/>
 </a>
 
-<br/>
+</div>
 
-<a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
-<a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
+### 👋 Hi, I'm Kasundi
 
-<br/><br/>
+I'm a **BSc (Hons) Computer Science** undergraduate at **NSBM Green University**, Sri Lanka, and a full-stack developer
+who enjoys taking products from first idea to live deployment.
+
+- 🎯 **Focus areas** — full-stack development · AI agents & LLMs · machine learning
+- 📚 **Currently strengthening** — system design · automated testing · CI/CD
+- 🔬 **Up next** — final-year research in NLP for low-resource languages
+- 💼 **Open to** — software engineering, data or ML internships (on-site or hybrid)
+
+**Let's build something.** If you're working on something where a curious, end-to-end developer would help, I'd love to hear about it.
+
+<p>
+  <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
+  <a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
+  <a href="https://github.com/KasundiRanaweera?tab=repositories"><img src="https://img.shields.io/badge/All_repositories-0b1226?style=for-the-badge&logo=github&logoColor=white" alt="All repositories"/></a>
+</p>
+
+<div align="center">
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg"/>
@@ -18,19 +33,6 @@
 </picture>
 
 </div>
-
-<img src="./assets/divider.svg" width="100%" alt=""/>
-
-## ✦ &nbsp;About me
-
-I'm a **BSc (Hons) Computer Science** undergraduate at **NSBM Green University**, Sri Lanka, and a full-stack developer
-who enjoys taking products from first idea to live deployment.
-
-
-- 🎯 **Focus areas** — full-stack development · AI agents & LLM · machine learning
-- 📚 **Currently strengthening** — system design · automated testing · CI/CD
-- 🔬 **Up next** — final-year research in NLP for low-resource languages
-- 💼 **Open to** — software engineering, data or ML internships (on-site or hybrid)
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
 
@@ -116,15 +118,5 @@ who enjoys taking products from first idea to live deployment.
 </div>
 
 <img src="./assets/divider.svg" width="100%" alt=""/>
-
-## ✦ &nbsp;Let's build something
-
-I'm looking for an **internship in software engineering, data or ML** — on-site or hybrid.
-If you're working on something where a curious, ship-it-end-to-end developer would help, I'd love to hear about it.
-
-<p>
-  <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" alt="LinkedIn"/></a>
-  <a href="https://github.com/KasundiRanaweera?tab=repositories"><img src="https://img.shields.io/badge/All_repositories-0b1226?style=for-the-badge&logo=github&logoColor=white" alt="All repositories"/></a>
-</p>
 
 <img src="./assets/footer.svg" width="100%" alt="creating · learning · growing — thanks for stopping by"/>
