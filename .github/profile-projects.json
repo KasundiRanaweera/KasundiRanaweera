@@ -3,6 +3,7 @@
   "cards": 4,
   "first_card_number": 5,
   "hide_topic": "hide-from-profile",
+  "hide_languages": ["Jupyter Notebook", "HTML", "CSS", "CMake", "Dockerfile", "PLpgSQL", "Batchfile", "Procfile"],
 
   "featured": [
     "Application_Tracking_System-Backend",

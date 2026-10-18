@@ -7,16 +7,13 @@ Runs in .github/workflows/projects.yml. Picks up every "standard" repository:
 The newest ones get an animated card (assets/projects/<repo>.svg); the rest are listed in a table.
 Card copy comes from: config "overrides" -> repo description -> first paragraph of the README.
 """
-import json, os, re, sys, urllib.error, urllib.request
+import os, re, sys
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 from theme import ACCENTS, card, wrap, write  # noqa: E402
-
-CONFIG = json.load(open(os.path.join(ROOT, ".github", "profile-projects.json"), encoding="utf-8"))
-OWNER = os.environ.get("GITHUB_REPOSITORY_OWNER") or CONFIG["owner"]
-TOKEN = os.environ.get("GITHUB_TOKEN")
+from gh import CONFIG, OWNER, get, languages, my_work, owned_repos  # noqa: E402
 CARD_DIR = os.path.join(ROOT, "assets", "projects")
 README = os.path.join(ROOT, "README.md")
 
@@ -24,20 +21,6 @@ EMOJI = {"Python": "🐍", "Jupyter Notebook": "📓", "Java": "☕", "TypeScrip
          "Dart": "📱", "C#": "🧩", "C++": "⚙️", "HTML": "🎨", "Go": "🐹", "Kotlin": "📱", "Swift": "📱"}
 IGNORED_LANGS = {"CMake", "C", "Objective-C", "Swift", "Kotlin", "Dockerfile", "PLpgSQL", "Batchfile",
                  "Shell", "PowerShell", "Makefile", "Procfile", "SCSS"}
-
-
-def get(url, raw=False):
-    headers = {"User-Agent": f"{OWNER}-profile", "Accept": "application/vnd.github+json"}
-    if TOKEN and "api.github.com" in url:
-        headers["Authorization"] = f"Bearer {TOKEN}"
-    try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as r:
-            body = r.read().decode("utf-8", "replace")
-            return body if raw else json.loads(body)
-    except urllib.error.HTTPError as e:
-        if e.code == 404:
-            return None
-        raise
 
 
 def readme_blurb(repo):
@@ -72,28 +55,19 @@ def pretty(name):
 def stack_for(repo):
     if repo["topics"]:
         return [t.replace("-", " ").title() for t in repo["topics"] if t != CONFIG["hide_topic"]][:5]
-    langs = get(repo["languages_url"]) or {}
+    langs = languages(repo)
     names = [l for l in sorted(langs, key=langs.get, reverse=True) if l not in IGNORED_LANGS]
     names = ["Jupyter" if l == "Jupyter Notebook" else l for l in names]
-    if "Dart" in names:                       # C++/HTML there are Flutter's platform runners
-        names = ["Flutter"] + [l for l in names if l not in ("C++", "HTML", "JavaScript")]
+    if "Dart" in names:
+        names.insert(0, "Flutter")
     if len(names) > 1:                         # markup only counts when it's all there is
         names = [l for l in names if l not in ("HTML", "CSS")] or names
     return names[:4]
 
 
 def collect():
-    repos, page = [], 1
-    while True:
-        batch = get(f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner&page={page}")
-        repos += batch
-        if len(batch) < 100:
-            break
-        page += 1
-    skip = set(CONFIG["featured"]) | set(CONFIG["exclude"]) | {OWNER}
-    keep = [r for r in repos
-            if not r["fork"] and not r["archived"] and r["size"] > 0
-            and r["name"] not in skip and CONFIG["hide_topic"] not in r.get("topics", [])]
+    featured = set(CONFIG["featured"])
+    keep = [r for r in my_work(owned_repos()) if r["name"] not in featured]
     keep.sort(key=lambda r: r["created_at"], reverse=True)
 
     projects = []

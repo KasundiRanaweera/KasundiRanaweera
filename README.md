@@ -12,9 +12,9 @@
 <br/><br/>
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg"/>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-light.svg"/>
-  <img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/snake-dark.svg" width="100%" alt="My GitHub contribution chart"/>
+  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg"/>
+  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-light.svg"/>
+  <img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg" width="100%" alt="My GitHub contribution chart"/>
 </picture>
 
 </div>
@@ -110,8 +110,8 @@ who enjoys taking products from first idea to live deployment.
 
 <div align="center">
 
-<img src="https://streak-stats.demolab.com?user=KasundiRanaweera&hide_border=true&border_radius=20&background=0b1226&stroke=1e2d5a&ring=38bdf8&fire=38bdf8&currStreakNum=eef4ff&sideNums=eef4ff&currStreakLabel=38bdf8&sideLabels=a9b8d6&dates=5f6f8f" height="180" alt="GitHub streak"/>
-<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=KasundiRanaweera&layout=compact&hide_border=true&border_radius=20&bg_color=0b1226&title_color=38bdf8&text_color=a9b8d6&langs_count=6&hide=jupyter%20notebook,html,css,cmake,c%2B%2B,c" height="180" alt="Top languages"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/streak.svg" height="180" alt="GitHub contribution streak"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/languages.svg" height="180" alt="Most used languages"/>
 
 </div>
 

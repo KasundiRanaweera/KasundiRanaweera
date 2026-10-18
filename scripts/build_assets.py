@@ -1,7 +1,9 @@
 """Generate the hand-made animated SVG assets for the profile README.
 
-usage: python build_assets.py <assets dir>
-needs: internet access (tech logos are fetched and embedded at build time)
+usage: python build_assets.py <assets dir> [--galaxy-only]
+needs: internet access (tech logos are fetched and embedded at build time); GITHUB_TOKEN recommended
+
+The tech galaxy also picks up new languages and repo topics automatically (see detect_new_tech).
 
 Project cards for new repositories are generated separately by update_projects.py.
 """
@@ -164,6 +166,63 @@ ORBITS = [  # (label, ring colour, radius, seconds per turn, [(name, icon source
         ("GitHub Actions", "githubactions"), ("Docker", "docker"), ("Vercel", "vercel"), ("Postman", "postman"),
         ("Jest", "jest"), ("Cypress", "cypress")]),
 ]
+
+
+# ---------- auto-detection: new languages / topics in your repos join the galaxy ----------
+LANG_ICONS = {"Python": "py", "Java": "java", "TypeScript": "ts", "JavaScript": "js", "Dart": "dart", "C#": "cs",
+              "C++": "cpp", "C": "c", "Go": "go", "Rust": "rust", "Kotlin": "kotlin", "Swift": "swift", "PHP": "php",
+              "Ruby": "ruby", "R": "r", "Scala": "scala", "Lua": "lua", "Haskell": "haskell", "Elixir": "elixir",
+              "Solidity": "solidity", "Shell": "bash", "PowerShell": "powershell", "Vue": "vue", "Svelte": "svelte"}
+# topic -> (display name, skillicons id, orbit index)
+TOPIC_ICONS = {
+    "nextjs": ("Next.js", "nextjs", 1), "vue": ("Vue", "vue", 1), "vuejs": ("Vue", "vue", 1), "angular": ("Angular", "angular", 1),
+    "svelte": ("Svelte", "svelte", 1), "nuxt": ("Nuxt", "nuxtjs", 1), "django": ("Django", "django", 1),
+    "flask": ("Flask", "flask", 1), "fastapi": ("FastAPI", "fastapi", 1), "nestjs": ("NestJS", "nestjs", 1),
+    "laravel": ("Laravel", "laravel", 1), "bootstrap": ("Bootstrap", "bootstrap", 1), "electron": ("Electron", "electron", 1),
+    "tauri": ("Tauri", "tauri", 1), "threejs": ("Three.js", "threejs", 1), "redux": ("Redux", "redux", 1),
+    "jquery": ("jQuery", "jquery", 1), "react": ("React", "react", 1), "flutter": ("Flutter", "flutter", 1),
+    "spring-boot": ("Spring Boot", "spring", 1), "nodejs": ("Node.js", "nodejs", 1), "express": ("Express", "express", 1),
+    "tailwindcss": ("Tailwind", "tailwind", 1), "dotnet": (".NET", "dotnet", 1), "vite": ("Vite", "vite", 1),
+    "mongodb": ("MongoDB", "mongodb", 2), "mysql": ("MySQL", "mysql", 2), "postgresql": ("PostgreSQL", "postgres", 2),
+    "redis": ("Redis", "redis", 2), "sqlite": ("SQLite", "sqlite", 2), "firebase": ("Firebase", "firebase", 2),
+    "supabase": ("Supabase", "supabase", 2), "prisma": ("Prisma", "prisma", 2), "graphql": ("GraphQL", "graphql", 2),
+    "tensorflow": ("TensorFlow", "tensorflow", 2), "pytorch": ("PyTorch", "pytorch", 2), "opencv": ("OpenCV", "opencv", 2),
+    "scikit-learn": ("scikit-learn", "sklearn", 2), "docker": ("Docker", "docker", 2), "kubernetes": ("Kubernetes", "kubernetes", 2),
+    "aws": ("AWS", "aws", 2), "azure": ("Azure", "azure", 2), "gcp": ("Google Cloud", "gcp", 2), "linux": ("Linux", "linux", 2),
+    "nginx": ("Nginx", "nginx", 2), "netlify": ("Netlify", "netlify", 2), "heroku": ("Heroku", "heroku", 2),
+    "vercel": ("Vercel", "vercel", 2), "postman": ("Postman", "postman", 2), "jest": ("Jest", "jest", 2),
+    "cypress": ("Cypress", "cypress", 2), "selenium": ("Selenium", "selenium", 2), "figma": ("Figma", "figma", 2),
+    "arduino": ("Arduino", "arduino", 2), "raspberry-pi": ("Raspberry Pi", "raspberrypi", 2), "unity": ("Unity", "unity", 2),
+    "blender": ("Blender", "blender", 2), "kafka": ("Kafka", "kafka", 2), "rabbitmq": ("RabbitMQ", "rabbitmq", 2),
+    "elasticsearch": ("Elasticsearch", "elasticsearch", 2), "github-actions": ("GitHub Actions", "githubactions", 2),
+}
+ORBIT_CAPACITY = [10, 16, 26]       # how many logos fit on each ring
+LANG_MIN_SHARE = 0.05               # a language must be ≥5% of some repo to count
+
+
+def detect_new_tech():
+    """Languages and topics found in your repos that the galaxy doesn't show yet."""
+    from gh import languages, my_work, owned_repos
+    have = {src for o in ORBITS for _, src in o[4] if isinstance(src, str)}
+    found = {}
+    for r in sorted(my_work(owned_repos()), key=lambda r: r["created_at"]):
+        langs = languages(r)
+        size = sum(langs.values()) or 1
+        for lang, n in langs.items():
+            icon = LANG_ICONS.get(lang)
+            if icon and n / size >= LANG_MIN_SHARE and icon not in have:
+                found.setdefault(icon, (lang, icon, 0))
+        for t in r.get("topics", []):
+            if t in TOPIC_ICONS and TOPIC_ICONS[t][1] not in have:
+                name, icon, orbit = TOPIC_ICONS[t]
+                found.setdefault(icon, (name, icon, orbit))
+    added = []
+    for name, icon, orbit in found.values():
+        if len(ORBITS[orbit][4]) >= ORBIT_CAPACITY[orbit] or len(skillicon(icon)) < 400:   # ring full / unknown icon
+            continue
+        ORBITS[orbit][4].append((name, icon))
+        added.append(name)
+    print("tech stack — auto-added:", ", ".join(added) or "nothing new")
 
 
 def galaxy():
@@ -348,4 +407,8 @@ def footer():
 
 
 if __name__ == "__main__":
-    hero(); galaxy(); featured(); divider(); footer()
+    detect_new_tech()
+    if "--galaxy-only" in sys.argv:          # what the scheduled workflow runs
+        galaxy()
+    else:
+        hero(); galaxy(); featured(); divider(); footer()
