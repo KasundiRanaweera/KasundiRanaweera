@@ -1,24 +1,12 @@
 <div align="center">
 
 <a href="https://github.com/KasundiRanaweera">
-  <img src="./assets/hero.svg" width="100%" alt="Kasundi Ranaweera — 🎓 Computer Science Undergraduate | 💻 Full-Stack Developer | 🤖 AI/ML & Data Science Enthusiast | ✨ exploring, creating, improving."/>
+  <img src="./assets/hero.svg" width="100%" alt="Hi, I'm Kasundi Ranaweera — BSc (Hons) Computer Science undergraduate at NSBM Green University, affiliated with the University of Plymouth. Interests: Full-Stack Development, Data Analytics, Machine Learning, AI &amp; LLMs. Learning: System Design, Software Architecture, Automated Testing, CI/CD. Research interests: NLP, AI for Low-Resource Languages. Goal: building impactful software solutions and continuously growing as a developer. Open to: Software Engineering, Data Analytics and Machine Learning internships."/>
 </a>
 
 </div>
 
-### 👋 Hi, I'm Kasundi
-
-I'm a **BSc (Hons) Computer Science** undergraduate at **NSBM Green University**, Sri Lanka, and a full-stack developer
-who enjoys taking products from first idea to live deployment.
-
-- 🎯 **Focus areas** — full-stack development · AI agents & LLMs · machine learning
-- 📚 **Currently strengthening** — system design · automated testing · CI/CD
-- 🔬 **Up next** — final-year research in NLP for low-resource languages
-- 💼 **Open to** — software engineering, data or ML internships (on-site or hybrid)
-
-**Let's build something.** If you're working on something where a curious, end-to-end developer would help, I'd love to hear about it.
-
-<p>
+<p align="center">
   <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
   <a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
   <a href="https://github.com/KasundiRanaweera?tab=repositories"><img src="https://img.shields.io/badge/All_repositories-0b1226?style=for-the-badge&logo=github&logoColor=white" alt="All repositories"/></a>

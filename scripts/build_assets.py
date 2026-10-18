@@ -47,30 +47,89 @@ def petals(n, w, h, seed=7, x_min=380):
 
 
 # =====================================================================================
-# HERO — name + tagline, centred
+# HERO — greeting, name, roles, intro and an "at a glance" panel
 # =====================================================================================
 TAGLINE = [("🎓", "Computer Science Undergraduate", CYAN),
            ("💻", "Full-Stack Developer", AZURE),
            ("🤖", "AI/ML & Data Science Enthusiast", INDIGO)]
-MOTTO = ("✨", "exploring, creating, improving.")
+# intro paragraph: list of lines, each a list of (text, bold)
+INTRO = [
+    [("I'm a ", False), ("BSc (Hons) Computer Science", True), (" undergraduate at ", False), ("NSBM Green University", True), (",", False)],
+    [("affiliated with the ", False), ("University of Plymouth", True), (". I'm passionate about building meaningful", False)],
+    [("digital experiences and turning ideas into reality through technology.", False)],
+]
+CLOSING = ("✨", "Building, learning, and innovating")
+
+# line icons drawn on a 24×24 grid (Lucide-style strokes)
+ICONS = {
+    "code": '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/><line x1="14" y1="4" x2="10" y2="20"/>',
+    "wrench": '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>',
+    "flask": '<path d="M9 3h6"/><path d="M10 3v6.5L4.6 18.8A1.5 1.5 0 0 0 5.9 21h12.2a1.5 1.5 0 0 0 1.3-2.2L14 9.5V3"/><path d="M7.5 15h9"/>',
+    "target": '<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+    "briefcase": '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+}
+# (icon, label, accent, chips or sentence)
+GLANCE = [
+    ("code", "Interests", CYAN, ["Full-Stack Development", "Data Analytics", "Machine Learning", "AI & LLMs"]),
+    ("wrench", "Learning", SKY, ["System Design", "Software Architecture", "Automated Testing", "CI/CD"]),
+    ("flask", "Research Interests", AZURE, ["NLP", "AI for Low-Resource Languages"]),
+    ("target", "Goal", BLUE, "Building impactful software solutions and continuously growing as a developer."),
+    ("briefcase", "Open to", INDIGO, ["Software Engineering", "Data Analytics", "Machine Learning Internships"]),
+]
 
 
 def hero():
-    W, H = 1200, 280
+    W = 1200
+    px, pw = 90, 1020                     # glance panel
+    row_h, panel_top = 62, 384
+    panel_h = 20 + row_h * len(GLANCE) + 8
+    H = panel_top + panel_h + 92
     petal_svg, petal_css = petals(18, W, H, x_min=20)
 
-    # tagline pills, centred as one row
+    # role pills, centred as one row
     fs, gap = 17, 14
     widths = [tw(t, fs) * 1.08 + fs + 56 for _, t, _ in TAGLINE]
     x = (W - sum(widths) - gap * (len(widths) - 1)) / 2
     pills = []
     for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
         pills.append(
-            f'<g class="rise" style="animation-delay:{0.55 + i * 0.12:.2f}s">'
-            f'<rect x="{x:.0f}" y="150" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
-            f'<text x="{x + 22:.0f}" y="178" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<g class="rise" style="animation-delay:{0.45 + i * 0.1:.2f}s">'
+            f'<rect x="{x:.0f}" y="178" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'<text x="{x + 22:.0f}" y="206" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
             f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
+
+    # intro paragraph
+    intro = []
+    bold = f' font-weight="700" fill="{TEXT}"'
+    for i, line in enumerate(INTRO):
+        spans = "".join(f'<tspan{bold if b else ""}>{escape(t)}</tspan>' for t, b in line)
+        intro.append(f'<text x="600" y="{276 + i * 30}" font-family="{SANS}" font-size="18.5" fill="{MUTED}" text-anchor="middle">{spans}</text>')
+
+    # at-a-glance rows
+    rows = []
+    for i, (icon, label, c, value) in enumerate(GLANCE):
+        y = panel_top + 20 + i * row_h           # row top
+        cy = y + row_h / 2 - 4                   # row centre line
+        parts = [f'<g class="rise" style="animation-delay:{0.9 + i * 0.1:.2f}s">']
+        if i:
+            parts.append(f'<line x1="{px + 24}" y1="{y - 4}" x2="{px + pw - 24}" y2="{y - 4}" stroke="{TEXT}" stroke-opacity=".06"/>')
+        parts.append(f'<rect x="{px + 24}" y="{cy - 20}" width="40" height="40" rx="12" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
+                     f'<g transform="translate({px + 34},{cy - 10}) scale(.8333)" fill="none" stroke="{c}" stroke-width="2" '
+                     f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g>'
+                     f'<text x="{px + 82}" y="{cy + 5}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" '
+                     f'letter-spacing="1.2">{escape(label.upper())}</text>')
+        vx = px + 290
+        if isinstance(value, str):
+            parts.append(f'<text x="{vx}" y="{cy + 6}" font-family="{SANS}" font-size="16.5" fill="{TEXT}">{escape(value)}</text>')
+        else:
+            for chip in value:
+                w = tw(chip, 15) * 1.08 + 30
+                parts.append(f'<rect x="{vx:.0f}" y="{cy - 15}" width="{w:.0f}" height="30" rx="15" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
+                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="15" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text>')
+                vx += w + 9
+        parts.append("</g>")
+        rows.append("".join(parts))
 
     style = f"""
 .rise {{ animation: rise .8s {EASE} both; }}
@@ -83,12 +142,14 @@ def hero():
 @keyframes drift2 {{ to {{ transform: translate(70px, -30px) scale(.92); }} }}
 .shine {{ animation: shine 6s ease-in-out 1.2s infinite; }}
 @keyframes shine {{ 0% {{ transform: translateX(-200px); }} 45%, 100% {{ transform: translateX(1300px); }} }}
-.line {{ transform-box: fill-box; transform-origin: center; animation: grow 1.2s {EASE} .45s both; }}
+.wave {{ transform-box: fill-box; transform-origin: 70% 80%; animation: wave 2.4s ease-in-out .8s infinite; }}
+@keyframes wave {{ 0%, 60%, 100% {{ transform: rotate(0); }} 10%, 30% {{ transform: rotate(16deg); }} 20%, 40% {{ transform: rotate(-8deg); }} }}
+.line {{ transform-box: fill-box; transform-origin: center; animation: grow 1.2s {EASE} .4s both; }}
 @keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
 @media (prefers-reduced-motion: reduce) {{ .petal {{ display: none; }} }}
 {petal_css}"""
 
-    name = f'x="600" y="108" font-family="{SANS}" font-size="80" font-weight="800" letter-spacing="-2" text-anchor="middle"'
+    name = f'x="600" y="146" font-family="{SANS}" font-size="78" font-weight="800" letter-spacing="-2" text-anchor="middle"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
@@ -97,6 +158,7 @@ def hero():
   <radialGradient id="gI"><stop offset="0" stop-color="#6366f1" stop-opacity=".5"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
   <linearGradient id="name" x1="0" y1="0" x2="1" y2="0">{stops(GRAD)}</linearGradient>
   <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CYAN}" stop-opacity="0"/><stop offset=".5" stop-color="{AZURE}"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
+  <linearGradient id="panelB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{CYAN}" stop-opacity=".45"/><stop offset=".5" stop-color="{AZURE}" stop-opacity=".1"/><stop offset="1" stop-color="#6366f1" stop-opacity=".45"/></linearGradient>
   <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
     <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
   </linearGradient>
@@ -107,24 +169,38 @@ def hero():
 <g clip-path="url(#card)">
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
   <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".06"/>
-  <circle class="orb o1" cx="1040" cy="40" r="300" fill="url(#gA)"/>
-  <circle class="orb o2" cx="140" cy="300" r="280" fill="url(#gC)"/>
-  <circle class="orb o3" cx="640" cy="330" r="240" fill="url(#gI)"/>
+  <circle class="orb o1" cx="1040" cy="40" r="320" fill="url(#gA)"/>
+  <circle class="orb o2" cx="140" cy="{H * .55:.0f}" r="300" fill="url(#gC)"/>
+  <circle class="orb o3" cx="700" cy="{H - 40}" r="280" fill="url(#gI)"/>
   {petal_svg}
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
-<g class="rise" style="animation-delay:.25s">
-  <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="22" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
+<g class="rise" style="animation-delay:.05s">
+  <text x="600" y="62" font-family="{SANS}" font-size="22" font-weight="600" fill="{MUTED}" text-anchor="middle"><tspan class="wave">👋</tspan> Hi, I'm</text>
 </g>
-<rect class="line" x="420" y="126" width="360" height="2" rx="1" fill="url(#ring)"/>
+<g class="rise" style="animation-delay:.18s">
+  <text {name} fill="url(#name)">Kasundi Ranaweera</text>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="60" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
+</g>
+<rect class="line" x="420" y="162" width="360" height="2" rx="1" fill="url(#ring)"/>
 {''.join(pills)}
-<g class="rise" style="animation-delay:.95s">
-  <text x="600" y="240" font-family="{SANS}" font-size="19" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{MOTTO[0]}</tspan> {escape(MOTTO[1])}</text>
+<g class="rise" style="animation-delay:.7s">{''.join(intro)}</g>
+
+<g class="rise" style="animation-delay:.8s">
+  <rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20" fill="{BG0}" fill-opacity=".55" stroke="url(#panelB)" stroke-width="1.5"/>
+</g>
+{''.join(rows)}
+
+<g class="rise" style="animation-delay:1.5s">
+  <text x="600" y="{panel_top + panel_h + 54}" font-family="{SANS}" font-size="20" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
-    out("hero.svg", svg(W, H, style, body, "Kasundi Ranaweera — Computer Science Undergraduate | Full-Stack Developer | AI/ML & Data Science Enthusiast | exploring, creating, improving."))
+    title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "
+             + " ".join("".join(t for t, _ in line) for line in INTRO) + " "
+             + " ".join(f"{label}: {v if isinstance(v, str) else ', '.join(v)}." for _, label, _, v in GLANCE)
+             + f" {CLOSING[1]}.")
+    out("hero.svg", svg(W, H, style, body, title))
 
 
 # =====================================================================================
@@ -380,7 +456,7 @@ def divider():
 
 
 def footer():
-    W, H = 1200, 170
+    W, H = 1200, 110
     wave = "M0,70 C150,30 300,110 450,70 C600,30 750,110 900,70 C1050,30 1200,110 1350,70 C1500,30 1650,110 1800,70 C1950,30 2100,110 2250,70 C2400,30 2550,110 2700,70 V170 H0Z"
     style = f"""
 .w1 {{ animation: wave 14s linear infinite; }}
@@ -394,13 +470,13 @@ def footer():
 <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{BG1}"/><stop offset="1" stop-color="{BG0}"/></linearGradient></defs>
 <g clip-path="url(#c)">
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
-  <path class="w2" d="{wave}" fill="#6366f1" opacity=".16" transform="translate(0,22)"/>
-  <path class="w1" d="{wave}" fill="url(#g)" opacity=".22" transform="translate(0,44)"/>
+  <path class="w2" d="{wave}" fill="#6366f1" opacity=".16" transform="translate(0,14)"/>
+  <path class="w1" d="{wave}" fill="url(#g)" opacity=".22" transform="translate(0,30)"/>
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="23.25" fill="none" stroke="{LINE}"/>
 <g class="in">
-  <text x="600" y="66" font-family="{SANS}" font-size="24" font-weight="700" fill="{TEXT}" text-anchor="middle">creating <tspan fill="{CYAN}">·</tspan> learning <tspan fill="{INDIGO}">·</tspan> growing</text>
-  <text x="600" y="96" font-family="{MONO}" font-size="14" fill="{MUTED}" text-anchor="middle">thanks for stopping by ✦ my journey, my pace</text>
+  <text x="600" y="46" font-family="{SANS}" font-size="24" font-weight="700" fill="{TEXT}" text-anchor="middle">creating <tspan fill="{CYAN}">·</tspan> learning <tspan fill="{INDIGO}">·</tspan> growing</text>
+  <text x="600" y="72" font-family="{MONO}" font-size="14" fill="{MUTED}" text-anchor="middle">thanks for stopping by ✦ my journey, my pace</text>
 </g>
 """
     out("footer.svg", svg(W, H, style, body, "creating, learning, growing — thanks for stopping by"))
