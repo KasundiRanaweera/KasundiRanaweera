@@ -300,7 +300,7 @@ def hero():
 {''.join(rows)}
 
 <g class="rise" style="animation-delay:2.4s">
-  <text x="600" y="{panel_top + panel_h + 35}" font-family="{SANS}" font-size="16" font-style="italic" font-weight="700" fill="{TEXT}" text-anchor="middle"><tspan class="sparkle" font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+  <text x="600" y="{panel_top + panel_h + 35}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle"><tspan class="sparkle">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "

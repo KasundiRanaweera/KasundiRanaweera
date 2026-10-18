@@ -14,11 +14,8 @@
 
 <div align="center">
 
-<picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg"/>
-  <source media="(prefers-color-scheme: light)" srcset="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-light.svg"/>
-  <img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg" width="100%" alt="My GitHub contribution chart"/>
-</picture>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-dark.svg#gh-dark-mode-only" width="100%" alt="My GitHub contribution chart"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/contributions-light.svg#gh-light-mode-only" width="100%" alt="My GitHub contribution chart"/>
 
 </div>
 
