@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580" height="282" viewBox="0 0 580 282" role="img" aria-label="Campus Shuttle Service — University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning.">
+<title>Campus Shuttle Service — University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning.</title>
+<style>
+.in { animation: rise .8s cubic-bezier(.22,1,.36,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+.sweep { animation: sweep 7s ease-in-out 1s infinite; }
+@keyframes sweep { 0% { transform: translateX(-260px) skewX(-20deg); } 35%, 100% { transform: translateX(760px) skewX(-20deg); } }
+.glow { transform-box: fill-box; transform-origin: center; animation: breathe 6s ease-in-out infinite alternate; }
+@keyframes breathe { to { transform: scale(1.25); opacity: .6; } }
+.pulse { transform-box: fill-box; transform-origin: center; animation: pulse 1.8s ease-out infinite; }
+@keyframes pulse { from { opacity: .8; transform: scale(1); } to { opacity: 0; transform: scale(2.8); } }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}</style>
+
+<defs>
+  <clipPath id="c"><rect width="580" height="282" rx="22"/></clipPath>
+  <radialGradient id="g"><stop offset="0" stop-color="#38bdf8" stop-opacity=".35"/><stop offset="1" stop-color="#38bdf8" stop-opacity="0"/></radialGradient>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1226"/><stop offset="1" stop-color="#060a17"/></linearGradient>
+  <linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#38bdf8" stop-opacity=".9"/><stop offset=".5" stop-color="#38bdf8" stop-opacity=".12"/><stop offset="1" stop-color="#818cf8" stop-opacity=".55"/></linearGradient>
+  <linearGradient id="cta" x1="0" y1="0" x2="1" y2="0"><stop offset="0.00" stop-color="#38bdf8"/><stop offset="1.00" stop-color="#7dd3fc"/></linearGradient>
+  <linearGradient id="s" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".07"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+</defs>
+<g clip-path="url(#c)">
+  <rect width="580" height="282" fill="url(#bg)"/>
+  <circle class="glow" cx="540" cy="30" r="190" fill="url(#g)"/>
+  <rect class="sweep" x="0" y="-40" width="160" height="362" fill="url(#s)"/>
+  <text x="552" y="92" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="96" font-weight="800" fill="#38bdf8" fill-opacity=".1" text-anchor="end">10</text>
+</g>
+<rect x="1" y="1" width="578" height="280" rx="21" fill="none" stroke="url(#b)" stroke-width="1.5"/>
+<g class="in">
+  <rect x="32" y="26" width="54" height="54" rx="16" fill="#38bdf8" fill-opacity=".14" stroke="#38bdf8" stroke-opacity=".4"/>
+  <text x="59" y="63" font-size="26" text-anchor="middle">🚌</text>
+  <text x="104" y="53" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="26" font-weight="800" fill="#eef4ff">Campus Shuttle Service</text>
+  <text x="105" y="76" font-family="ui-monospace, SFMono-Regular, 'Cascadia Code', Consolas, 'Liberation Mono', monospace" font-size="13" fill="#38bdf8">react · mar '26</text>
+</g>
+<g class="in" style="animation-delay:.12s"><text x="32" y="114" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="15.5" fill="#a9b8d6">University shuttle system with live maps and payments,</text><text x="32" y="138" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="15.5" fill="#a9b8d6">backed by full design docs — use-case, class and EER</text><text x="32" y="162" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="15.5" fill="#a9b8d6">diagrams plus sprint planning.</text></g>
+<g class="in" style="animation-delay:.24s"><rect x="32" y="184" width="56" height="28" rx="14" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-opacity=".35"/><text x="60" y="203" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#eef4ff" text-anchor="middle">React</text><rect x="96.5" y="184" width="89" height="28" rx="14" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-opacity=".35"/><text x="141" y="203" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#eef4ff" text-anchor="middle">TypeScript</text><rect x="193.5" y="184" width="76" height="28" rx="14" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-opacity=".35"/><text x="232" y="203" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#eef4ff" text-anchor="middle">Supabase</text><rect x="277.5" y="184" width="70" height="28" rx="14" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-opacity=".35"/><text x="312" y="203" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#eef4ff" text-anchor="middle">Leaflet</text><rect x="355.0" y="184" width="70" height="28" rx="14" fill="#38bdf8" fill-opacity=".1" stroke="#38bdf8" stroke-opacity=".35"/><text x="390" y="203" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" fill="#eef4ff" text-anchor="middle">Cypress</text></g>
+<g class="in" style="animation-delay:.36s"><rect x="32" y="228" width="128" height="30" rx="15" fill="none" stroke="#38bdf8"/><text x="96" y="248" font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif" font-size="13" font-weight="700" fill="#38bdf8" text-anchor="middle">VIEW CODE ↗</text><rect x="473" y="232" width="75" height="22" rx="11" fill="#38bdf8" fill-opacity=".12"/><text x="511" y="247" font-family="ui-monospace, SFMono-Regular, 'Cascadia Code', Consolas, 'Liberation Mono', monospace" font-size="11" fill="#38bdf8" text-anchor="middle">Mar 2026</text></g>
+
+</svg>

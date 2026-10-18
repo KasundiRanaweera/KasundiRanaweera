@@ -79,19 +79,20 @@ GLANCE = [
 
 
 def hero():
-    import random
-    rnd = random.Random(11)
     W = 1200
-    AV = base64.b64encode(open(os.path.join(OUT, "avatar.jpg"), "rb").read()).decode()
-    acx, acy, ar = 200, 150, 92              # animated avatar
-    tx = 392                                  # right-hand text column
-    pill_y = 250
-    px, pw = 60, 1080                         # glance grid
-    gap, card_h, goal_h = 10, 70, 40          # goal_h: room for the plain Goal sentence under the cards
-    cw = (pw - gap) // 2
-    panel_top = 300
-    panel_h = card_h * 2 + goal_h + gap
-    H = panel_top + panel_h + 54
+    ST = base64.b64encode(open(os.path.join(OUT, "avatar-sticker.png"), "rb").read()).decode()
+    sx, sy, sh = 54, 24, 286                  # die-cut sticker of the 3D avatar, on the left
+    sw = round(333 * sh / 440)
+    scx, scy = sx + sw / 2, sy + sh / 2
+    tx = 318                                  # text column beside the sticker
+    pill_y = 254
+    px, pw = 40, 1120                         # node grid
+    hgap, vgap, card_h = 60, 22, 64           # gaps hold the connector lines
+    cw = (pw - hgap) // 2
+    panel_top = 316
+    strip_top = panel_top + card_h * 2 + vgap + 16
+    H = strip_top + 30 + 28 + 22
+    SOFT, NODE = "#c7dbff", "#0b1d5c"
 
     # ---- role pills, in the text column right under the paragraph ----
     fs, gap = 13.5, 10
@@ -102,77 +103,62 @@ def hero():
         pills.append(
             f'<g class="pop" style="animation-delay:{1.15 + i * .12:.2f}s">'
             f'<rect class="glowpill" style="animation-delay:{i * 1.3:.1f}s" x="{x:.0f}" y="{pill_y}" width="{w:.0f}" height="34" rx="17" '
-            f'fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'fill="{NODE}" fill-opacity=".85" stroke="{c}" stroke-opacity=".7" stroke-width="1.3"/>'
             f'<text x="{x + 16:.0f}" y="{pill_y + 22}" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
             f'<tspan>{emo}</tspan><tspan dx="7" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
 
     # ---- intro paragraph, each line wipes in like it's being typed ----
-    bold = f' font-weight="700" fill="{TEXT}"'
+    bold = ' font-weight="700" fill="#ffffff"'
     intro = []
     for i, line in enumerate(INTRO):
         spans = "".join(f'<tspan{bold if b else ""}>{escape(t)}</tspan>' for t, b in line)
-        intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{176 + i * 26}" '
-                     f'font-family="{SANS}" font-size="17" fill="{MUTED}">{spans}</text>')
+        intro.append(f'<text class="type" style="animation-delay:{0.9 + i * .45:.2f}s" x="{tx}" y="{192 + i * 26}" '
+                     f'font-family="{SANS}" font-size="17" fill="{SOFT}">{spans}</text>')
 
-    # ---- at-a-glance mini-cards: two per row, Goal as a slim full-width card ----
+    # ---- the four points as nodes joined by animated lines (like the reference's diagram) ----
     spots = {"Interests": (0, 0), "Learning": (1, 0), "Research Interests": (0, 1), "Open to": (1, 1)}
-    rows = []
+    rows, links = [], []
     for i, (icon, label, c, value) in enumerate(GLANCE):
-        if label == "Goal":                              # written as a normal sentence, not a card
-            gy = panel_top + card_h * 2 + gap + 28
-            rows.append(f'<g class="rise" style="animation-delay:{1.5 + i * .12:.2f}s">'
-                        f'<text x="600" y="{gy}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle">'
+        if label == "Goal":                              # written as a normal sentence, in a slim strip
+            gw = tw(f"🎯 Goal: {value}", 16) * .96 + 56
+            rows.append(f'<g class="rise" style="animation-delay:{1.7 + i * .12:.2f}s">'
+                        f'<rect x="{600 - gw / 2:.0f}" y="{strip_top}" width="{gw:.0f}" height="30" rx="15" fill="{NODE}" fill-opacity=".8" '
+                        f'stroke="{CYAN}" stroke-opacity=".55" stroke-width="1.3"/>'
+                        f'<text x="600" y="{strip_top + 20.5}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle">'
                         f'<tspan>🎯</tspan> Goal: {escape(value)}</text></g>')
             continue
         col, rw = spots[label]
-        full = col is None
-        x0 = px if full else px + col * (cw + gap)
-        y0 = panel_top + (0 if rw == 0 else card_h + gap if rw == 1 else 2 * card_h + 2 * gap)
-        w0, h0 = (pw, goal_h) if full else (cw, card_h)
+        x0 = px + col * (cw + hgap)
+        y0 = panel_top + rw * (card_h + vgap)
         d = 1.5 + i * .12
-        tile_y = y0 + (h0 - 24) / 2 if full else y0 + 9
         parts = [f'<g class="slide" style="animation-delay:{d:.2f}s">',
-                 f'<rect x="{x0}" y="{y0}" width="{w0}" height="{h0}" rx="14" fill="url(#cardBg{i})" stroke="{c}" stroke-opacity=".3"/>',
-                 f'<rect class="bar" x="{x0}" y="{y0 + 12}" width="3" height="{h0 - 24}" rx="1.5" fill="{c}"/>',
+                 f'<rect class="node" style="animation-delay:{i * .9:.1f}s" x="{x0}" y="{y0}" width="{cw}" height="{card_h}" rx="16" '
+                 f'fill="{NODE}" fill-opacity=".88" stroke="{c}" stroke-opacity=".75" stroke-width="1.5"/>',
                  f'<g class="icon" style="animation-delay:{d + .15:.2f}s">'
-                 f'<rect x="{x0 + 16}" y="{tile_y}" width="24" height="24" rx="8" fill="{c}" fill-opacity=".14" stroke="{c}" stroke-opacity=".45"/>'
-                 f'<g transform="translate({x0 + 22},{tile_y + 6}) scale(.5)" fill="none" stroke="{c}" stroke-width="2.4" '
+                 f'<rect x="{x0 + 16}" y="{y0 + 9}" width="24" height="24" rx="8" fill="{c}" fill-opacity=".16" stroke="{c}" stroke-opacity=".5"/>'
+                 f'<g transform="translate({x0 + 22},{y0 + 15}) scale(.5)" fill="none" stroke="{c}" stroke-width="2.4" '
                  f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g></g>',
-                 f'<text x="{x0 + 50}" y="{tile_y + 16.5}" font-family="{MONO}" font-size="11.5" font-weight="700" fill="{c}" '
+                 f'<text x="{x0 + 50}" y="{y0 + 25.5}" font-family="{MONO}" font-size="11.5" font-weight="700" fill="{c}" '
                  f'letter-spacing="1.3">{escape(label.upper())}</text>']
-        if isinstance(value, str):                       # the Goal sentence sits on the same line as its label
-            parts.append(f'<text x="{x0 + 112}" y="{tile_y + 17}" font-family="{SANS}" font-size="14.5" fill="{TEXT}">{escape(value)}</text>')
-        else:
-            vx = x0 + 16
-            for k, chip in enumerate(value):
-                cwid = tw(chip, 12.5) * 1.08 + 18
-                parts.append(f'<g class="pop" style="animation-delay:{d + .2 + k * .07:.2f}s">'
-                             f'<rect x="{vx:.0f}" y="{y0 + 41}" width="{cwid:.0f}" height="24" rx="12" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".32"/>'
-                             f'<text x="{vx + cwid / 2:.0f}" y="{y0 + 57}" font-family="{SANS}" font-size="12.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text></g>')
-                vx += cwid + 6
+        vx = x0 + 16
+        for k, chip in enumerate(value):
+            cwid = tw(chip, 12.5) * 1.08 + 16
+            parts.append(f'<g class="pop" style="animation-delay:{d + .2 + k * .07:.2f}s">'
+                         f'<rect x="{vx:.0f}" y="{y0 + 38}" width="{cwid:.0f}" height="22" rx="11" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".4"/>'
+                         f'<text x="{vx + cwid / 2:.0f}" y="{y0 + 53.5}" font-family="{SANS}" font-size="12.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text></g>')
+            vx += cwid + 6
         parts.append("</g>")
         rows.append("".join(parts))
 
-    # ---- ambient particles: twinkling stars + embers rising ----
-    stars = "".join(f'<circle class="tw" cx="{rnd.randint(10, W - 10)}" cy="{rnd.randint(10, H - 10)}" r="{rnd.choice([.8, 1, 1.3])}" '
-                    f'fill="{ICE}" style="animation-delay:-{rnd.uniform(0, 4):.1f}s"/>' for _ in range(55))
-    embers, ember_css = [], []
-    for i in range(14):
-        ex, dur = rnd.randint(30, W - 30), rnd.uniform(9, 16)
-        ember_css.append(f".em{i}{{animation:rise{i} {dur:.1f}s linear -{rnd.uniform(0, dur):.1f}s infinite}}"
-                         f"@keyframes rise{i}{{0%{{transform:translate(0,0);opacity:0}}15%{{opacity:.8}}"
-                         f"100%{{transform:translate({rnd.randint(-40, 40)}px,-{H + 20}px);opacity:0}}}}")
-        embers.append(f'<circle class="em{i} ember" cx="{ex}" cy="{H + 10}" r="{rnd.uniform(1.2, 2.6):.1f}" fill="{rnd.choice([CYAN, SKY, INDIGO])}"/>')
+    # connectors: left <-> right on both rows, top <-> bottom on both columns
+    for rw in (0, 1):
+        y = panel_top + rw * (card_h + vgap) + card_h / 2
+        links.append(f'<line x1="{px + cw}" y1="{y}" x2="{px + cw + hgap}" y2="{y}"/>')
+    for col in (0, 1):
+        x = px + col * (cw + hgap) + cw / 2
+        links.append(f'<line x1="{x}" y1="{panel_top + card_h}" x2="{x}" y2="{panel_top + card_h + vgap}"/>')
 
-    # ---- orbiting satellites around the avatar ----
-    sats = []
-    for i, (rad, dur, size, col, start) in enumerate([(ar + 27, 9, 5, CYAN, 0), (ar + 27, 9, 3.5, SKY, 180),
-                                                      (ar + 38, 16, 4, INDIGO, 90), (ar + 38, 16, 2.5, ICE, 270)]):
-        sats.append(f'<g class="orb{i}" style="transform:rotate({start}deg)"><circle cx="{acx}" cy="{acy - rad}" r="{size}" fill="{col}"/>'
-                    f'<circle cx="{acx}" cy="{acy - rad}" r="{size * 2.6}" fill="{col}" opacity=".18"/></g>')
-
-    p_len = 2 * (pw + panel_h)                 # panel perimeter, for the travelling light
     style = f"""
 @keyframes fadeUp {{ from {{ opacity: 0; transform: translateY(14px); }} to {{ opacity: 1; transform: none; }} }}
 .rise {{ animation: fadeUp .8s {EASE} both; }}
@@ -193,114 +179,89 @@ def hero():
 .a3 {{ animation: drift1 23s ease-in-out infinite alternate-reverse; }}
 @keyframes drift1 {{ to {{ transform: translate(-80px, 50px) scale(1.15); }} }}
 @keyframes drift2 {{ to {{ transform: translate(90px, -40px) scale(.9); }} }}
-.beam {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: spin 24s linear infinite; }}
-.tw {{ animation: tw 3.2s ease-in-out infinite alternate; }}
-@keyframes tw {{ from {{ opacity: .1; }} to {{ opacity: .85; }} }}
-{''.join(ember_css)}
+.gridglow {{ animation: gridglow 6s ease-in-out infinite alternate; }}
+@keyframes gridglow {{ from {{ opacity: .45; }} to {{ opacity: 1; }} }}
 
-.avatar {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: avIn 1.1s {EASE} both; }}
-@keyframes avIn {{ from {{ opacity: 0; transform: scale(.7) rotate(-12deg); }} to {{ opacity: 1; transform: none; }} }}
-.float {{ animation: float 6s ease-in-out 1.1s infinite; }}
-@keyframes float {{ 0%, 100% {{ transform: translateY(0); }} 50% {{ transform: translateY(-8px); }} }}
-.spin {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: spin 18s linear infinite; }}
-.spin.rev {{ animation-duration: 28s; animation-direction: reverse; }}
-@keyframes spin {{ to {{ transform: rotate(360deg); }} }}
-.orb0, .orb1 {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: orbit 9s linear infinite; }}
-.orb1 {{ animation-delay: -4.5s; }}
-.orb2, .orb3 {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: orbit 16s linear infinite reverse; }}
-.orb3 {{ animation-delay: -8s; }}
-@keyframes orbit {{ from {{ transform: rotate(0deg); }} to {{ transform: rotate(360deg); }} }}
-.ripple {{ transform-box: view-box; transform-origin: {acx}px {acy}px; animation: ripple 4s ease-out infinite; }}
-@keyframes ripple {{ from {{ opacity: .55; transform: scale(1); }} to {{ opacity: 0; transform: scale(1.45); }} }}
-.halo {{ transform-box: fill-box; transform-origin: center; animation: halo 4s ease-in-out infinite alternate; }}
-@keyframes halo {{ from {{ opacity: .45; transform: scale(.95); }} to {{ opacity: .9; transform: scale(1.06); }} }}
+.flow {{ stroke-dasharray: 18 26; animation: flow 1.5s linear 2s infinite; }}
+@keyframes flow {{ to {{ stroke-dashoffset: -44; }} }}
+.node {{ animation: node 5s ease-in-out 2.5s infinite; }}
+@keyframes node {{ 0%, 80%, 100% {{ stroke-opacity: .75; }} 90% {{ stroke-opacity: 1; }} }}
+
+.stick {{ transform-box: view-box; transform-origin: {scx}px {scy}px; animation: slap .9s cubic-bezier(.34, 1.56, .64, 1) .15s both; }}
+@keyframes slap {{ from {{ opacity: 0; transform: scale(1.25) rotate(-16deg); }} to {{ opacity: 1; transform: rotate(-3deg); }} }}
+.bob {{ transform-box: view-box; transform-origin: {scx}px {sy + sh}px; animation: bob 6s ease-in-out 1.2s infinite; }}
+@keyframes bob {{ 0%, 100% {{ transform: translateY(0) rotate(0deg); }} 50% {{ transform: translateY(-7px) rotate(1.4deg); }} }}
+.twk {{ transform-box: fill-box; transform-origin: center; animation: twk 2.8s ease-in-out infinite; }}
+@keyframes twk {{ 0%, 100% {{ opacity: .25; transform: scale(.6) rotate(0deg); }} 50% {{ opacity: 1; transform: scale(1) rotate(45deg); }} }}
 
 .wave {{ transform-box: fill-box; transform-origin: 70% 80%; animation: wave 2.6s ease-in-out 1s infinite; }}
 @keyframes wave {{ 0%, 60%, 100% {{ transform: rotate(0); }} 10%, 30% {{ transform: rotate(16deg); }} 20%, 40% {{ transform: rotate(-8deg); }} }}
 .shine {{ animation: shine 6s ease-in-out 1.6s infinite; }}
 @keyframes shine {{ 0% {{ transform: translateX(-220px); }} 45%, 100% {{ transform: translateX(900px); }} }}
-.line {{ transform-box: fill-box; transform-origin: left center; animation: grow 1.2s {EASE} .7s both; }}
+.bar {{ transform-box: fill-box; transform-origin: left center; animation: grow 1s {EASE} .7s both; }}
 @keyframes grow {{ from {{ transform: scaleX(0); }} to {{ transform: none; }} }}
 .glowpill {{ animation: glow 4s ease-in-out 2s infinite; }}
-@keyframes glow {{ 0%, 70%, 100% {{ stroke-opacity: .5; fill-opacity: .1; }} 85% {{ stroke-opacity: 1; fill-opacity: .22; }} }}
-.comet {{ stroke-dasharray: 160 {p_len - 160}; animation: comet 7s linear 2s infinite; }}
-@keyframes comet {{ from {{ stroke-dashoffset: 0; }} to {{ stroke-dashoffset: -{p_len}; }} }}
-.scan {{ animation: scan 6s ease-in-out 3s infinite; }}
-@keyframes scan {{ 0% {{ transform: translateY(0); opacity: 0; }} 8% {{ opacity: 1; }} 70% {{ transform: translateY({panel_h - 40}px); opacity: 1; }} 78%, 100% {{ transform: translateY({panel_h - 40}px); opacity: 0; }} }}
-.bar {{ animation: barGlow 3.6s ease-in-out 2.5s infinite alternate; }}
-@keyframes barGlow {{ from {{ opacity: .55; }} to {{ opacity: 1; }} }}
+@keyframes glow {{ 0%, 70%, 100% {{ stroke-opacity: .7; }} 85% {{ stroke-opacity: 1; }} }}
 .sparkle {{ transform-box: fill-box; transform-origin: center; animation: sparkle 2.4s ease-in-out infinite; }}
 @keyframes sparkle {{ 0%, 100% {{ transform: scale(1) rotate(0); }} 50% {{ transform: scale(1.25) rotate(20deg); }} }}
 
-@media (prefers-reduced-motion: reduce) {{ .ember, .ripple, .comet, .scan, .beam {{ display: none; }} }}"""
+@media (prefers-reduced-motion: reduce) {{ .stick {{ transform: rotate(-3deg); }} }}"""
 
-    name = f'x="{tx - 2}" y="112" font-family="{SANS}" font-size="64" font-weight="800" letter-spacing="-1.5"'
+    name = f'x="{tx - 2}" y="132" font-family="{SANS}" font-size="74" font-weight="800" letter-spacing="-2"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
   <radialGradient id="gA"><stop offset="0" stop-color="{AZURE}" stop-opacity=".5"/><stop offset="1" stop-color="{AZURE}" stop-opacity="0"/></radialGradient>
   <radialGradient id="gC"><stop offset="0" stop-color="{CYAN}" stop-opacity=".35"/><stop offset="1" stop-color="{CYAN}" stop-opacity="0"/></radialGradient>
   <radialGradient id="gI"><stop offset="0" stop-color="#6366f1" stop-opacity=".5"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
-  <radialGradient id="halo"><stop offset=".55" stop-color="{AZURE}" stop-opacity=".55"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></radialGradient>
-  <radialGradient id="beam"><stop offset="0" stop-color="{SKY}" stop-opacity=".12"/><stop offset="1" stop-color="{SKY}" stop-opacity="0"/></radialGradient>
-  <linearGradient id="name" x1="0" y1="0" x2="1" y2="0">{stops(GRAD)}</linearGradient>
-  <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">{stops(RING)}</linearGradient>
-  <linearGradient id="uline" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{CYAN}"/><stop offset=".6" stop-color="{AZURE}"/><stop offset="1" stop-color="#6366f1" stop-opacity="0"/></linearGradient>
-  <linearGradient id="panelB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{CYAN}" stop-opacity=".45"/><stop offset=".5" stop-color="{AZURE}" stop-opacity=".1"/><stop offset="1" stop-color="#6366f1" stop-opacity=".45"/></linearGradient>
-  <linearGradient id="scanG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="{SKY}" stop-opacity="0"/><stop offset=".5" stop-color="{SKY}" stop-opacity=".07"/><stop offset="1" stop-color="{SKY}" stop-opacity="0"/></linearGradient>
-  <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0">
-    <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".85"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
-  </linearGradient>
-  <pattern id="dots" width="22" height="22" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.2" fill="{TEXT}"/></pattern>
+  <linearGradient id="name" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffffff"/><stop offset=".7" stop-color="#e3eeff"/><stop offset="1" stop-color="#b9d6ff"/></linearGradient>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#020617" flood-opacity=".55"/></filter>
+  <linearGradient id="shineG" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  <linearGradient id="lineL" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7dd3fc" stop-opacity="0"/><stop offset="1" stop-color="#7dd3fc" stop-opacity=".85"/></linearGradient>
+  <linearGradient id="lineR" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#7dd3fc" stop-opacity=".85"/><stop offset="1" stop-color="#7dd3fc" stop-opacity="0"/></linearGradient>
+  <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" fill="none" stroke="#8ec5ff" stroke-opacity=".06" stroke-width="1"/></pattern>
   <clipPath id="card"><rect width="{W}" height="{H}" rx="28"/></clipPath>
-  <clipPath id="face"><circle cx="{acx}" cy="{acy}" r="{ar}"/></clipPath>
-  {"".join(f'<linearGradient id="cardBg{i}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{c}" stop-opacity=".13"/><stop offset="1" stop-color="{BG0}" stop-opacity=".55"/></linearGradient>' for i, (_, _, c, _) in enumerate(GLANCE))}
-  <clipPath id="panelC"><rect x="{px}" y="{panel_top}" width="{pw}" height="{panel_h}" rx="20"/></clipPath>
   <mask id="nameMask"><text {name} fill="#fff">Kasundi Ranaweera</text></mask>
 </defs>
 
-<!-- background: aurora, light beam, stars, rising embers -->
+<!-- background: blue gradient, faint grid, soft glows -->
 <g clip-path="url(#card)">
   <rect width="{W}" height="{H}" fill="url(#bg)"/>
-  <rect width="{W}" height="{H}" fill="url(#dots)" opacity=".05"/>
+  <rect width="{W}" height="{H}" fill="url(#grid)"/>
   <circle class="aur a1" cx="1040" cy="40" r="330" fill="url(#gA)"/>
   <circle class="aur a2" cx="160" cy="{H * .55:.0f}" r="300" fill="url(#gC)"/>
   <circle class="aur a3" cx="720" cy="{H - 30}" r="300" fill="url(#gI)"/>
-  <g class="beam"><ellipse cx="{acx}" cy="{acy}" rx="560" ry="46" fill="url(#beam)"/></g>
-  {stars}
-  {''.join(embers)}
 </g>
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
-<!-- animated profile -->
-<g class="avatar"><g class="float">
-  <circle class="halo" cx="{acx}" cy="{acy}" r="{ar + 22}" fill="url(#halo)"/>
-  <circle class="ripple" cx="{acx}" cy="{acy}" r="{ar + 6}" fill="none" stroke="{SKY}" stroke-width="1.5"/>
-  <circle class="ripple" style="animation-delay:2s" cx="{acx}" cy="{acy}" r="{ar + 6}" fill="none" stroke="{INDIGO}" stroke-width="1.5"/>
-  <circle class="spin" cx="{acx}" cy="{acy}" r="{ar + 16}" fill="none" stroke="url(#ring)" stroke-width="3" stroke-linecap="round" stroke-dasharray="2 11"/>
-  <circle class="spin rev" cx="{acx}" cy="{acy}" r="{ar + 8}" fill="none" stroke="url(#ring)" stroke-width="2.5" stroke-dasharray="110 36 26 36" stroke-linecap="round"/>
-  <circle cx="{acx}" cy="{acy}" r="{ar + 2}" fill="{BG0}"/>
-  <image href="data:image/jpeg;base64,{AV}" x="{acx - ar}" y="{acy - ar}" width="{2 * ar}" height="{2 * ar}" clip-path="url(#face)" preserveAspectRatio="xMidYMid slice"/>
-  {''.join(sats)}
-</g></g>
-
-<!-- name + intro -->
+<!-- name + intro, left aligned -->
 <g class="rise" style="animation-delay:.2s">
-  <text x="{tx}" y="50" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}"><tspan class="wave">👋</tspan> Hi, I'm</text>
+  <text x="{tx}" y="64" font-family="{SANS}" font-size="26" font-weight="600" fill="#8ec9ff"><tspan class="wave">👋</tspan> Hi, I'm</text>
 </g>
 <g class="reveal">
   <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="{tx - 40}" y="46" width="150" height="86" fill="url(#shineG)" transform="translate(-220,0)"/></g>
+  <g mask="url(#nameMask)" opacity=".5"><rect class="shine" x="{tx - 40}" y="60" width="150" height="90" fill="url(#shineG)" transform="translate(-220,0)"/></g>
 </g>
-<rect class="line" x="{tx}" y="130" width="420" height="2.5" rx="1.25" fill="url(#uline)"/>
+<rect class="bar" x="{tx}" y="152" width="84" height="4" rx="2" fill="#22d3ee"/>
 {''.join(intro)}
 {''.join(pills)}
 
-<!-- at a glance -->
+<!-- the 3D avatar as a die-cut sticker -->
+<g class="stick"><g class="bob">
+  <image href="data:image/png;base64,{ST}" x="{sx}" y="{sy}" width="{sw}" height="{sh}" filter="url(#shadow)"/>
+</g></g>
+<path class="twk" d="M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2Z" fill="#7dd3fc" transform="translate({sx + sw + 6},{sy + 30})"/>
+<path class="twk" style="animation-delay:1.3s" d="M0,-9 L2,-2 L9,0 L2,2 L0,9 L-2,2 L-9,0 L-2,-2Z" fill="#c4b5fd" transform="translate({sx - 14},{sy + 120}) scale(.7)"/>
+
+<!-- the four points: nodes joined by lines with moving dashes -->
+<g stroke="#2f63d6" stroke-width="2" stroke-linecap="round" opacity=".9">{''.join(links)}</g>
+<g class="flow" stroke="#38bdf8" stroke-width="2.5" stroke-linecap="round">{''.join(links)}</g>
 {''.join(rows)}
 
 <g class="rise" style="animation-delay:2.4s">
-  <text x="600" y="{panel_top + panel_h + 35}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle"><tspan class="sparkle">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+  <rect x="272" y="{strip_top + 30 + 20}" width="170" height="2" rx="1" fill="url(#lineL)"/>
+  <rect x="758" y="{strip_top + 30 + 20}" width="170" height="2" rx="1" fill="url(#lineR)"/>
+  <text x="600" y="{strip_top + 30 + 25}" font-family="{SANS}" font-size="16" font-weight="700" fill="{TEXT}" text-anchor="middle"><tspan class="sparkle">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "
@@ -314,8 +275,8 @@ def hero():
 # TECH GALAXY — three orbits of real logos, with a legend
 # =====================================================================================
 def fetch(url):
-    with urllib.request.urlopen(urllib.request.Request(url, headers={"User-Agent": "profile-build"}), timeout=30) as r:
-        return r.read().decode()
+    from gh import open_url
+    return open_url(urllib.request.Request(url, headers={"User-Agent": "profile-build"}))
 
 
 def skillicon(i):
@@ -562,36 +523,9 @@ def divider():
     out("divider.svg", svg(W, H, style, body, "divider"))
 
 
-def footer():
-    W, H = 1200, 110
-    wave = "M0,70 C150,30 300,110 450,70 C600,30 750,110 900,70 C1050,30 1200,110 1350,70 C1500,30 1650,110 1800,70 C1950,30 2100,110 2250,70 C2400,30 2550,110 2700,70 V170 H0Z"
-    style = f"""
-.w1 {{ animation: wave 14s linear infinite; }}
-.w2 {{ animation: wave 20s linear infinite reverse; }}
-@keyframes wave {{ to {{ transform: translateX(-900px); }} }}
-.in {{ animation: rise 1s {EASE} .3s both; }}
-@keyframes rise {{ from {{ opacity: 0; transform: translateY(10px); }} to {{ opacity: 1; transform: none; }} }}"""
-    body = f"""
-<defs><clipPath id="c"><rect width="{W}" height="{H}" rx="24"/></clipPath>
-<linearGradient id="g" x1="0" y1="0" x2="1" y2="0">{stops(RING)}</linearGradient>
-<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="{BG1}"/><stop offset="1" stop-color="{BG0}"/></linearGradient></defs>
-<g clip-path="url(#c)">
-  <rect width="{W}" height="{H}" fill="url(#bg)"/>
-  <path class="w2" d="{wave}" fill="#6366f1" opacity=".16" transform="translate(0,14)"/>
-  <path class="w1" d="{wave}" fill="url(#g)" opacity=".22" transform="translate(0,30)"/>
-</g>
-<rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="23.25" fill="none" stroke="{LINE}"/>
-<g class="in">
-  <text x="600" y="46" font-family="{SANS}" font-size="24" font-weight="700" fill="{TEXT}" text-anchor="middle">creating <tspan fill="{CYAN}">·</tspan> learning <tspan fill="{INDIGO}">·</tspan> growing</text>
-  <text x="600" y="72" font-family="{MONO}" font-size="14" fill="{MUTED}" text-anchor="middle">thanks for stopping by ✦ my journey, my pace</text>
-</g>
-"""
-    out("footer.svg", svg(W, H, style, body, "creating, learning, growing — thanks for stopping by"))
-
-
 if __name__ == "__main__":
     detect_new_tech()
     if "--galaxy-only" in sys.argv:          # what the scheduled workflow runs
         galaxy()
     else:
-        hero(); galaxy(); featured(); divider(); footer()
+        hero(); galaxy(); featured(); divider()

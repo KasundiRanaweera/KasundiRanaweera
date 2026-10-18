@@ -76,11 +76,24 @@
 <summary><b>&nbsp;🔹 More things I've built</b></summary>
 <br/>
 
-| | Project | What it is | Stack |
-|:-:|---|---|---|
-| 🙈 | [PAS — Blind Matching](https://github.com/KasundiRanaweera/Project-Approval-System) | Matches student research proposals with supervisors while hiding student identities until a match is confirmed, to reduce bias. | ASP.NET Core · C# · EF Core · SQL Server |
-| 🚌 | [Campus Shuttle Service](https://github.com/KasundiRanaweera/University-Shuttle-Service-) | University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning. | React · TypeScript · Supabase · Leaflet · Cypress |
-| 🎓 | [Student Management App](https://github.com/KasundiRanaweera/student_management_app) | Flutter mobile app with full create, read, update and delete for student records in Firebase Firestore. | Flutter · Dart · Firestore |
+<table>
+  <tr>
+    <td width="50%">
+      <a href="https://github.com/KasundiRanaweera/Project-Approval-System"><img src="./assets/projects/Project-Approval-System.svg" width="100%" alt="PAS — Blind Matching — Matches student research proposals with supervisors while hiding student identities until a match is confirmed, to reduce bias."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Project-Approval-System">Source</a></sub></p>
+    </td>
+    <td width="50%">
+      <a href="https://github.com/KasundiRanaweera/University-Shuttle-Service-"><img src="./assets/projects/University-Shuttle-Service-.svg" width="100%" alt="Campus Shuttle Service — University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/University-Shuttle-Service-">Source</a></sub></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%">
+      <a href="https://github.com/KasundiRanaweera/student_management_app"><img src="./assets/projects/student_management_app.svg" width="100%" alt="Student Management App — Flutter mobile app with full create, read, update and delete for student records in Firebase Firestore."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/student_management_app">Source</a></sub></p>
+    </td>
+  </tr>
+</table>
 
 </details>
 <!-- MORE-PROJECTS:END -->
@@ -97,11 +110,7 @@
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/streak.svg" height="180" alt="GitHub contribution streak"/>
-<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/languages.svg" height="180" alt="Most used languages"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/languages.svg" width="49%" alt="Most used languages"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/streak.svg" width="49%" alt="GitHub contribution streak"/>
 
 </div>
-
-<img src="./assets/divider.svg" width="100%" alt=""/>
-
-<img src="./assets/footer.svg" width="100%" alt="creating · learning · growing — thanks for stopping by"/>

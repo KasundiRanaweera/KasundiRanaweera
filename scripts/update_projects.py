@@ -92,39 +92,40 @@ def render(projects):
     n_cards = CONFIG["cards"]
     os.makedirs(CARD_DIR, exist_ok=True)
     wanted = set()
-    cells = []
-    for i, p in enumerate(projects[:n_cards]):
+
+    def cell(i, p):
+        """One animated card (written to assets/projects/) plus its table cell — used for every project."""
         fresh = (now - p["created"]).days <= 30
         badge = "NEW" if fresh else p["created"].strftime("%b %Y")
-        tag = " · ".join(x for x in [(p["lang"] or "project").lower(), p["created"].strftime("%b '%y").lower()] if x)
+        main = (p["stack"][0] if p["stack"] else p["lang"] or "project").lower()   # real tech, not GitHub's byte count (HTML / C++ in Flutter apps)
+        tag = f"{main} · " + p["created"].strftime("%b '%y").lower()
         svg = card(p["title"], tag, wrap(p["desc"]), p["stack"], ACCENTS[i % len(ACCENTS)],
                    emoji=p["emoji"], number=f"{i + CONFIG['first_card_number']:02d}", live=bool(p["homepage"]), badge=badge)
         fname = f"{p['name']}.svg"
         wanted.add(fname)
         write(os.path.join(CARD_DIR, fname), svg)
         links = f'<a href="{p["url"]}">Source</a>' + (f' · <a href="{p["homepage"]}">Live demo</a>' if p["homepage"] else "")
-        cells.append(f'    <td width="50%">\n      <a href="{p["homepage"] or p["url"]}"><img src="./assets/projects/{fname}" width="100%" '
-                     f'alt="{p["title"]} — {p["desc"][:150].replace(chr(34), "")}"/></a>\n'
-                     f'      <p align="center"><sub>{links}</sub></p>\n    </td>')
+        return (f'    <td width="50%">\n      <a href="{p["homepage"] or p["url"]}"><img src="./assets/projects/{fname}" width="100%" '
+                f'alt="{p["title"]} — {p["desc"][:150].replace(chr(34), "")}"/></a>\n'
+                f'      <p align="center"><sub>{links}</sub></p>\n    </td>')
+
+    def grid(cells):
+        rows = ["<table>"]
+        for i in range(0, len(cells), 2):
+            rows += ["  <tr>", *cells[i:i + 2], "  </tr>"]
+        rows.append("</table>")
+        return "\n".join(rows)
+
+    cells = [cell(i, p) for i, p in enumerate(projects)]
     for f in os.listdir(CARD_DIR):                       # drop cards that rotated out
         if f.endswith(".svg") and f not in wanted:
             os.remove(os.path.join(CARD_DIR, f))
 
-    rows = ["<table>"]
-    for i in range(0, len(cells), 2):
-        rows += ["  <tr>", *cells[i:i + 2], "  </tr>"]
-    rows.append("</table>")
-    latest = "\n".join(rows) if cells else "<p><i>New projects will appear here automatically.</i></p>"
-
-    rest = projects[n_cards:]
-    if rest:
-        table = ["<details>", "<summary><b>&nbsp;🔹 More things I've built</b></summary>", "<br/>", "",
-                 "| | Project | What it is | Stack |", "|:-:|---|---|---|"]
-        for p in rest:
-            d = wrap(p["desc"], 220, 1)[0].replace("|", "/")
-            table.append(f'| {p["emoji"]} | [{p["title"]}]({p["url"]}) | {d} | {" · ".join(p["stack"])} |')
-        table += ["", "</details>"]
-        more = "\n".join(table)
+    latest = grid(cells[:n_cards]) if cells else "<p><i>New projects will appear here automatically.</i></p>"
+    # everything past the newest few: the same cards, folded away
+    if cells[n_cards:]:
+        more = ("<details>\n<summary><b>&nbsp;🔹 More things I've built</b></summary>\n<br/>\n\n"
+                + grid(cells[n_cards:]) + "\n\n</details>")
     else:
         more = ""
     return latest, more

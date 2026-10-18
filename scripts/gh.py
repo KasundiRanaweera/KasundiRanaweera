@@ -1,5 +1,5 @@
 """Tiny GitHub API helpers shared by the profile scripts (stdlib only)."""
-import json, os, sys, urllib.error, urllib.request
+import json, os, sys, time, urllib.error, urllib.request
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONFIG = json.load(open(os.path.join(ROOT, ".github", "profile-projects.json"), encoding="utf-8"))
@@ -10,14 +10,28 @@ TOKEN = os.environ.get("GITHUB_TOKEN")
 FLUTTER_RUNNER_LANGS = {"C++", "C", "CMake", "Swift", "Kotlin", "Objective-C", "HTML", "JavaScript"}
 
 
+def open_url(req, tries=4):
+    """urlopen with retries — scheduled runs shouldn't fail on a dropped connection or a 5xx."""
+    for attempt in range(tries):
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return r.read().decode("utf-8", "replace")
+        except urllib.error.HTTPError as e:
+            if e.code < 500 or attempt == tries - 1:
+                raise
+        except (urllib.error.URLError, ConnectionError, TimeoutError):
+            if attempt == tries - 1:
+                raise
+        time.sleep(2 ** attempt)
+
+
 def get(url, raw=False):
     headers = {"User-Agent": f"{OWNER}-profile", "Accept": "application/vnd.github+json"}
     if TOKEN and "api.github.com" in url:
         headers["Authorization"] = f"Bearer {TOKEN}"
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=30) as r:
-            body = r.read().decode("utf-8", "replace")
-            return body if raw else json.loads(body)
+        body = open_url(urllib.request.Request(url, headers=headers))
+        return body if raw else json.loads(body)
     except urllib.error.HTTPError as e:
         if e.code == 404:
             return None
@@ -30,8 +44,7 @@ def graphql(query, **variables):
     req = urllib.request.Request("https://api.github.com/graphql",
                                  data=json.dumps({"query": query, "variables": variables}).encode(),
                                  headers={"Authorization": f"Bearer {TOKEN}", "User-Agent": f"{OWNER}-profile"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        data = json.load(r)
+    data = json.loads(open_url(req))
     if "errors" in data:
         sys.exit(data["errors"])
     return data["data"]
