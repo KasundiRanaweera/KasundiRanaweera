@@ -81,9 +81,9 @@ GLANCE = [
 def hero():
     W = 1200
     px, pw = 90, 1020                     # glance panel
-    row_h, panel_top = 62, 384
-    panel_h = 20 + row_h * len(GLANCE) + 8
-    H = panel_top + panel_h + 92
+    row_h, panel_top = 46, 290
+    panel_h = 10 + row_h * len(GLANCE) + 6
+    H = panel_top + panel_h + 62
     petal_svg, petal_css = petals(18, W, H, x_min=20)
 
     # role pills, centred as one row
@@ -94,8 +94,8 @@ def hero():
     for i, ((emo, t, c), w) in enumerate(zip(TAGLINE, widths)):
         pills.append(
             f'<g class="rise" style="animation-delay:{0.45 + i * 0.1:.2f}s">'
-            f'<rect x="{x:.0f}" y="178" width="{w:.0f}" height="44" rx="22" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
-            f'<text x="{x + 22:.0f}" y="206" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
+            f'<rect x="{x:.0f}" y="146" width="{w:.0f}" height="40" rx="20" fill="{c}" fill-opacity=".1" stroke="{c}" stroke-opacity=".5"/>'
+            f'<text x="{x + 22:.0f}" y="172" font-family="{SANS}" font-size="{fs}" fill="{TEXT}">'
             f'<tspan>{emo}</tspan><tspan dx="9" font-weight="600">{escape(t)}</tspan></text></g>')
         x += w + gap
 
@@ -104,29 +104,29 @@ def hero():
     bold = f' font-weight="700" fill="{TEXT}"'
     for i, line in enumerate(INTRO):
         spans = "".join(f'<tspan{bold if b else ""}>{escape(t)}</tspan>' for t, b in line)
-        intro.append(f'<text x="600" y="{276 + i * 30}" font-family="{SANS}" font-size="18.5" fill="{MUTED}" text-anchor="middle">{spans}</text>')
+        intro.append(f'<text x="600" y="{220 + i * 26}" font-family="{SANS}" font-size="17.5" fill="{MUTED}" text-anchor="middle">{spans}</text>')
 
     # at-a-glance rows
     rows = []
     for i, (icon, label, c, value) in enumerate(GLANCE):
-        y = panel_top + 20 + i * row_h           # row top
-        cy = y + row_h / 2 - 4                   # row centre line
+        y = panel_top + 10 + i * row_h           # row top
+        cy = y + row_h / 2                       # row centre line
         parts = [f'<g class="rise" style="animation-delay:{0.9 + i * 0.1:.2f}s">']
         if i:
-            parts.append(f'<line x1="{px + 24}" y1="{y - 4}" x2="{px + pw - 24}" y2="{y - 4}" stroke="{TEXT}" stroke-opacity=".06"/>')
-        parts.append(f'<rect x="{px + 24}" y="{cy - 20}" width="40" height="40" rx="12" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
-                     f'<g transform="translate({px + 34},{cy - 10}) scale(.8333)" fill="none" stroke="{c}" stroke-width="2" '
+            parts.append(f'<line x1="{px + 24}" y1="{y}" x2="{px + pw - 24}" y2="{y}" stroke="{TEXT}" stroke-opacity=".06"/>')
+        parts.append(f'<rect x="{px + 24}" y="{cy - 16}" width="32" height="32" rx="10" fill="{c}" fill-opacity=".12" stroke="{c}" stroke-opacity=".45"/>'
+                     f'<g transform="translate({px + 31},{cy - 9}) scale(.75)" fill="none" stroke="{c}" stroke-width="2" '
                      f'stroke-linecap="round" stroke-linejoin="round">{ICONS[icon]}</g>'
-                     f'<text x="{px + 82}" y="{cy + 5}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" '
+                     f'<text x="{px + 72}" y="{cy + 5}" font-family="{MONO}" font-size="13" font-weight="700" fill="{c}" '
                      f'letter-spacing="1.2">{escape(label.upper())}</text>')
         vx = px + 290
         if isinstance(value, str):
-            parts.append(f'<text x="{vx}" y="{cy + 6}" font-family="{SANS}" font-size="16.5" fill="{TEXT}">{escape(value)}</text>')
+            parts.append(f'<text x="{vx}" y="{cy + 6}" font-family="{SANS}" font-size="16" fill="{TEXT}">{escape(value)}</text>')
         else:
             for chip in value:
-                w = tw(chip, 15) * 1.08 + 30
-                parts.append(f'<rect x="{vx:.0f}" y="{cy - 15}" width="{w:.0f}" height="30" rx="15" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
-                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="15" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text>')
+                w = tw(chip, 14.5) * 1.08 + 28
+                parts.append(f'<rect x="{vx:.0f}" y="{cy - 14}" width="{w:.0f}" height="28" rx="14" fill="{c}" fill-opacity=".08" stroke="{c}" stroke-opacity=".3"/>'
+                             f'<text x="{vx + w / 2:.0f}" y="{cy + 5}" font-family="{SANS}" font-size="14.5" fill="{TEXT}" text-anchor="middle">{escape(chip)}</text>')
                 vx += w + 9
         parts.append("</g>")
         rows.append("".join(parts))
@@ -149,7 +149,7 @@ def hero():
 @media (prefers-reduced-motion: reduce) {{ .petal {{ display: none; }} }}
 {petal_css}"""
 
-    name = f'x="600" y="146" font-family="{SANS}" font-size="78" font-weight="800" letter-spacing="-2" text-anchor="middle"'
+    name = f'x="600" y="118" font-family="{SANS}" font-size="70" font-weight="800" letter-spacing="-2" text-anchor="middle"'
     body = f"""
 <defs>
   <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">{stops(["#050914", "#0d1a3d", "#0a1230"])}</linearGradient>
@@ -177,13 +177,13 @@ def hero():
 <rect x=".75" y=".75" width="{W - 1.5}" height="{H - 1.5}" rx="27.5" fill="none" stroke="{SKY}" stroke-opacity=".12"/>
 
 <g class="rise" style="animation-delay:.05s">
-  <text x="600" y="62" font-family="{SANS}" font-size="22" font-weight="600" fill="{MUTED}" text-anchor="middle"><tspan class="wave">👋</tspan> Hi, I'm</text>
+  <text x="600" y="48" font-family="{SANS}" font-size="20" font-weight="600" fill="{MUTED}" text-anchor="middle"><tspan class="wave">👋</tspan> Hi, I'm</text>
 </g>
 <g class="rise" style="animation-delay:.18s">
   <text {name} fill="url(#name)">Kasundi Ranaweera</text>
-  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="60" width="160" height="110" fill="url(#shineG)" transform="translate(-200,0)"/></g>
+  <g mask="url(#nameMask)" opacity=".55"><rect class="shine" x="0" y="50" width="160" height="90" fill="url(#shineG)" transform="translate(-200,0)"/></g>
 </g>
-<rect class="line" x="420" y="162" width="360" height="2" rx="1" fill="url(#ring)"/>
+<rect class="line" x="420" y="132" width="360" height="2" rx="1" fill="url(#ring)"/>
 {''.join(pills)}
 <g class="rise" style="animation-delay:.7s">{''.join(intro)}</g>
 
@@ -193,7 +193,7 @@ def hero():
 {''.join(rows)}
 
 <g class="rise" style="animation-delay:1.5s">
-  <text x="600" y="{panel_top + panel_h + 54}" font-family="{SANS}" font-size="20" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
+  <text x="600" y="{panel_top + panel_h + 40}" font-family="{SANS}" font-size="18" font-style="italic" fill="{MUTED}" text-anchor="middle"><tspan font-style="normal">{CLOSING[0]}</tspan> {escape(CLOSING[1])}</text>
 </g>
 """
     title = ("Hi, I'm Kasundi Ranaweera — Computer Science Undergraduate, Full-Stack Developer, AI/ML & Data Science Enthusiast. "

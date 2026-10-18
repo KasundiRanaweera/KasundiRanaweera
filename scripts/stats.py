@@ -38,15 +38,14 @@ def fetch():
     return graphql(QUERY, login=OWNER)["user"]["contributionsCollection"]["contributionCalendar"]
 
 
-def render(cal, t):
+def render(cal, t, name):
     weeks = cal["weeks"]
     total = cal["totalContributions"]
-    left, top_title, box_y = 36, 18, 32          # day-label column, heading baseline, box top
-    pad = 16
-    grid_x, grid_y = pad + left, box_y + pad + 20  # 20px for month labels
+    left, pad = 36, 16                           # day-label column, inner padding
+    top_title = 34                               # heading baseline — inside the box, on its solid background
+    grid_x, grid_y = pad + left, top_title + 38  # month labels sit between heading and grid
     W = grid_x + len(weeks) * STEP - 3 + pad
-    box_h = pad + 20 + 7 * STEP - 3 + 14 + 22 + pad - 6
-    H = box_y + box_h + 1
+    H = grid_y + 7 * STEP - 3 + 14 + 10 + pad + 1
 
     # snake route: down one week column, up the next, through every day
     route = []
@@ -58,7 +57,7 @@ def render(cal, t):
     total_s = moving + SNAKE_PAUSE
     f_end = moving / total_s
 
-    cells, months, last_label, css = [], [], -9, []
+    cells, months, last_label = [], [], -9
     for wi, week in enumerate(weeks):
         first = date.fromisoformat(week["contributionDays"][0]["date"])
         if wi == 0 or first.day <= 7:                 # GitHub labels the week a month starts in
@@ -70,13 +69,7 @@ def render(cal, t):
         n, lvl = d["contributionCount"], LEVEL[d["contributionLevel"]]
         colour = t["levels"][lvl]
         label = f'{n or "No"} contribution{"" if n == 1 else "s"} on {date.fromisoformat(d["date"]).strftime("%B %-d" if os.name != "nt" else "%B %#d")}'
-        cls = ""
-        if lvl:   # eaten when the head arrives, back during the pause (CSS: works wherever the SVG is shown as an <img>)
-            eaten, back = 100 * (i + 1) * T_STEP / total_s, 100 * (moving + SNAKE_PAUSE * .5) / total_s
-            css.append(f".e{i}{{animation:e{i} {total_s:.2f}s step-end infinite}}"
-                       f"@keyframes e{i}{{0%{{fill:{colour}}}{eaten:.2f}%{{fill:{t['levels'][0]}}}{back:.2f}%{{fill:{colour}}}}}")
-            cls = f' class="e{i}"'
-        cells.append(f'<rect{cls} x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{colour}"'
+        cells.append(f'<rect x="{x}" y="{y}" width="{CELL}" height="{CELL}" rx="2" fill="{colour}"'
                      f' stroke="{t["outline"]}" stroke-opacity="{t["outline_op"]}"><title>{escape(label)}</title></rect>')
 
     path = "M" + " L".join(f"{grid_x + wi * STEP + CELL / 2},{grid_y + d['weekday'] * STEP + CELL / 2}" for wi, d in route)
@@ -106,10 +99,11 @@ def render(cal, t):
     heading = f'{total:,} contribution{"" if total == 1 else "s"} in the last year'
     return (f'<svg xmlns="http://www.w3.org/2000/svg" width="{W}" height="{H}" viewBox="0 0 {W} {H}" role="img" aria-label="{heading}">'
             f'<title>{heading}</title>'
-            f'<style>{"".join(css)}@media (prefers-reduced-motion: reduce){{rect{{animation:none!important}}}}</style>'
             f'<g font-family="{FONT}">'
-            f'<text x="1" y="{top_title}" font-size="16" fill="{t["text"]}">{heading}</text>'
-            f'<rect x=".5" y="{box_y + .5}" width="{W - 1}" height="{box_h}" rx="6" fill="{t["bg"]}" stroke="{t["border"]}"/>'
+            f'<rect x=".5" y=".5" width="{W - 1}" height="{H - 1}" rx="6" fill="{t["bg"]}" stroke="{t["border"]}"/>'
+            f'<text x="{pad}" y="{top_title}" font-size="16" fill="{t["text"]}">'
+            f'<tspan font-weight="700" fill="{t["levels"][4 if name == "dark" else 3]}">{total:,}</tspan>'
+            f' contribution{"" if total == 1 else "s"} in the last year</text>'
             f'{"".join(months)}{days}{"".join(cells)}{learn}{legend}</g></svg>\n')
 
 
@@ -277,7 +271,7 @@ def main():
     cal = fetch()
     TODAY = max(date.fromisoformat(d["date"]) for w in cal["weeks"] for d in w["contributionDays"])
     for name, theme in THEMES.items():
-        save(f"contributions-{name}.svg", render(cal, theme))
+        save(f"contributions-{name}.svg", render(cal, theme, name))
     streak, (total, cur, best) = streak_card(history())
     save("streak.svg", streak)
     totals = language_totals(my_work(owned_repos()))
