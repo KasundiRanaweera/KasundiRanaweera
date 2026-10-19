@@ -7,9 +7,9 @@
 </div>
 
 <p align="center">
-  <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white&labelColor=0b1226" alt="LinkedIn — Kasundi Ranaweera"/></a>
-  <a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-38bdf8?style=for-the-badge&logo=gmail&logoColor=white&labelColor=0b1226" alt="Email — kasundiranaweera@gmail.com"/></a>
-  <a href="https://github.com/KasundiRanaweera?tab=repositories"><img src="https://img.shields.io/badge/All_repositories-0b1226?style=for-the-badge&logo=github&logoColor=white" alt="All repositories"/></a>
+  <a href="https://www.linkedin.com/in/kasundi-ranaweera-41665a388/"><img src="https://img.shields.io/badge/LinkedIn-Kasundi_Ranaweera-0d1a3d?style=for-the-badge&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAyNCAyNCc%2BPHBhdGggZmlsbD0nd2hpdGUnIGQ9J00yMC40NSAyMC40NWgtMy41NnYtNS41N2MwLTEuMzMtLjAyLTMuMDQtMS44NS0zLjA0LTEuODUgMC0yLjE0IDEuNDUtMi4xNCAyLjk0djUuNjdIOS4zNVY5aDMuNDF2MS41NmguMDVjLjQ4LS45IDEuNjQtMS44NSAzLjM3LTEuODUgMy42IDAgNC4yNyAyLjM3IDQuMjcgNS40NnY2LjI4ek01LjM0IDcuNDNhMi4wNiAyLjA2IDAgMSAxIDAtNC4xMyAyLjA2IDIuMDYgMCAwIDEgMCA0LjEzek03LjEyIDIwLjQ1SDMuNTZWOWgzLjU2djExLjQ1eicvPjwvc3ZnPg%3D%3D&labelColor=000000" alt="LinkedIn — Kasundi Ranaweera"/></a>
+  <a href="mailto:kasundiranaweera@gmail.com"><img src="https://img.shields.io/badge/Email-kasundiranaweera@gmail.com-0d1a3d?style=for-the-badge&logo=gmail&logoColor=white&labelColor=000000" alt="Email — kasundiranaweera@gmail.com"/></a>
+  <a href="https://github.com/KasundiRanaweera?tab=repositories"><img src="https://img.shields.io/badge/All_repositories-000000?style=for-the-badge&logo=github&logoColor=white" alt="All repositories"/></a>
 </p>
 
 <div align="center">
@@ -110,7 +110,7 @@
 
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/languages.svg" width="49%" alt="Most used languages"/>
-<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/streak.svg" width="49%" alt="GitHub contribution streak"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/streak.svg" width="61%" alt="GitHub contribution streak"/>
+<img src="https://raw.githubusercontent.com/KasundiRanaweera/KasundiRanaweera/output/languages.svg" width="37%" alt="Most used languages"/>
 
 </div>
