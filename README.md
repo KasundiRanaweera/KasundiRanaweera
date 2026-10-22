@@ -30,8 +30,8 @@
       <p align="center"><sub><a href="https://talentbridge-application-tracking-system.vercel.app">Live demo</a> · <a href="https://github.com/KasundiRanaweera/Application_Tracking_System-Backend">Backend</a> · <a href="https://github.com/KasundiRanaweera/Application_Tracking_System-Frontend">Frontend</a> · <a href="https://application-tracking-system-backend.onrender.com/swagger-ui.html">API docs</a></sub></p>
     </td>
     <td width="50%">
-      <a href="https://flower-shop-kasundi.vercel.app"><img src="./assets/card-ceylon-petals.svg" width="100%" alt="Ceylon Petals — full-stack flower shop for Sri Lanka. TypeScript, React 19, Express 5, Prisma, PostgreSQL. Live demo."/></a>
-      <p align="center"><sub><a href="https://flower-shop-kasundi.vercel.app">Live demo</a> · <a href="https://github.com/KasundiRanaweera/Flower_Shop">Source</a></sub></p>
+      <a href="https://ceylon-petals.vercel.app/"><img src="./assets/card-ceylon-petals.svg" width="100%" alt="Ceylon Petals — full-stack flower shop for Sri Lanka. TypeScript, React 19, Express 5, Prisma, PostgreSQL. Live demo."/></a>
+      <p align="center"><sub><a href="https://ceylon-petals.vercel.app/">Live demo</a> · <a href="https://github.com/KasundiRanaweera/Flower_Shop">Source</a></sub></p>
     </td>
   </tr>
   <tr>
