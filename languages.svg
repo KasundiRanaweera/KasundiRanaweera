@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="195" viewBox="0 0 300 195" role="img" aria-label="Most used languages: TypeScript 48.1%, Dart 37.9%, JavaScript 7.4%, Python 2.7%, Java 2.6%, C# 1.2%">
+<title>Most used languages: TypeScript 48.1%, Dart 37.9%, JavaScript 7.4%, Python 2.7%, Java 2.6%, C# 1.2%</title>
+<style>
+.rise { animation: rise .8s cubic-bezier(.22,1,.36,1) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.bar { transform-box: fill-box; transform-origin: left center; animation: grow 1.2s cubic-bezier(.22,1,.36,1) .15s both; }
+@keyframes grow { from { transform: scaleX(0); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
+}</style>
+
+<defs>
+  <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0b1226"/><stop offset="1" stop-color="#060a17"/></linearGradient>
+  <clipPath id="bar"><rect x="24" y="54" width="252" height="8" rx="4"/></clipPath>
+</defs>
+<g font-family="'Segoe UI', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif">
+<rect x=".5" y=".5" width="299" height="194" rx="20" fill="url(#bg)" stroke="#1e2d5a"/>
+<text x="24" y="36" font-size="16" font-weight="700" fill="#7dd3fc">Most Used Languages</text>
+<g clip-path="url(#bar)"><g class="bar"><rect x="24.00" y="54" width="121.29" height="8" fill="#3178c6"/><rect x="145.29" y="54" width="95.48" height="8" fill="#00B4AB"/><rect x="240.77" y="54" width="18.70" height="8" fill="#f1e05a"/><rect x="259.47" y="54" width="6.86" height="8" fill="#3572A5"/><rect x="266.34" y="54" width="6.53" height="8" fill="#b07219"/><rect x="272.87" y="54" width="3.13" height="8" fill="#178600"/></g></g>
+<g class="rise" style="animation-delay:0.20s"><circle cx="29" cy="90" r="5" fill="#3178c6"/><text x="40" y="94" font-size="13" fill="#eef4ff">TypeScript <tspan fill="#5f6f8f">48.1%</tspan></text></g><g class="rise" style="animation-delay:0.27s"><circle cx="163" cy="90" r="5" fill="#00B4AB"/><text x="174" y="94" font-size="13" fill="#eef4ff">Dart <tspan fill="#5f6f8f">37.9%</tspan></text></g><g class="rise" style="animation-delay:0.34s"><circle cx="29" cy="120" r="5" fill="#f1e05a"/><text x="40" y="124" font-size="13" fill="#eef4ff">JavaScript <tspan fill="#5f6f8f">7.4%</tspan></text></g><g class="rise" style="animation-delay:0.41s"><circle cx="163" cy="120" r="5" fill="#3572A5"/><text x="174" y="124" font-size="13" fill="#eef4ff">Python <tspan fill="#5f6f8f">2.7%</tspan></text></g><g class="rise" style="animation-delay:0.48s"><circle cx="29" cy="150" r="5" fill="#b07219"/><text x="40" y="154" font-size="13" fill="#eef4ff">Java <tspan fill="#5f6f8f">2.6%</tspan></text></g><g class="rise" style="animation-delay:0.55s"><circle cx="163" cy="150" r="5" fill="#178600"/><text x="174" y="154" font-size="13" fill="#eef4ff">C# <tspan fill="#5f6f8f">1.2%</tspan></text></g>
+</g>
+</svg>
