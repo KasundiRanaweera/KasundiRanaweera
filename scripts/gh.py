@@ -54,6 +54,8 @@ def owned_repos():
     repos, page = [], 1
     while True:
         batch = get(f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner&page={page}")
+        if batch is None:
+            sys.exit(f"GitHub user '{OWNER}' not found — check \"owner\" in .github/profile-projects.json")
         repos += batch
         if len(batch) < 100:
             return repos

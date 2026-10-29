@@ -13,6 +13,8 @@ from xml.sax.saxutils import escape
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from theme import *  # noqa: E402,F403
 
+if len(sys.argv) < 2:
+    sys.exit("usage: python build_assets.py <assets dir> [--galaxy-only]")
 OUT = sys.argv[1]
 
 
