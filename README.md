@@ -50,22 +50,22 @@
 <table>
   <tr>
     <td width="50%">
-      <a href="https://github.com/KasundiRanaweera/Glimzi_Sticker_Gifting_App"><img src="./assets/projects/Glimzi_Sticker_Gifting_App.svg" width="100%" alt="Glimzi Sticker Gifting App — Marketing website and API for Glimzi, a fictional app for sending greeting cards with stickers, gift cards from independent shops and small cash gifts"/></a>
-      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Glimzi_Sticker_Gifting_App">Source</a></sub></p>
+      <a href="https://github.com/KasundiRanaweera/ex3_fullstack_module_nsbm"><img src="./assets/projects/ex3_fullstack_module_nsbm.svg" width="100%" alt="Ex3 Fullstack Module Nsbm — A fresh project — the README is on its way."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/ex3_fullstack_module_nsbm">Source</a></sub></p>
     </td>
     <td width="50%">
-      <a href="https://github.com/KasundiRanaweera/My_LLM_Learning_Projects"><img src="./assets/projects/My_LLM_Learning_Projects.svg" width="100%" alt="LLM Learning Projects — Notebooks from my day-by-day LLM learning path — prompting, tool calling and building blocks for agents."/></a>
-      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/My_LLM_Learning_Projects">Source</a></sub></p>
+      <a href="https://github.com/KasundiRanaweera/Glimzi_Sticker_Gifting_App"><img src="./assets/projects/Glimzi_Sticker_Gifting_App.svg" width="100%" alt="Glimzi Sticker Gifting App — Marketing website and API for Glimzi, a fictional app for sending greeting cards with stickers, gift cards from independent shops and small cash gifts"/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Glimzi_Sticker_Gifting_App">Source</a></sub></p>
     </td>
   </tr>
   <tr>
     <td width="50%">
-      <a href="https://github.com/KasundiRanaweera/My_First_AI_Agent"><img src="./assets/projects/My_First_AI_Agent.svg" width="100%" alt="My First AI Agent — A personal assistant that understands requests, picks the right tool and acts — built from scratch in Python on a local Llama 3.1 model."/></a>
-      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/My_First_AI_Agent">Source</a></sub></p>
+      <a href="https://github.com/KasundiRanaweera/My_LLM_Learning_Projects"><img src="./assets/projects/My_LLM_Learning_Projects.svg" width="100%" alt="LLM Learning Projects — Notebooks from my day-by-day LLM learning path — prompting, tool calling and building blocks for agents."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/My_LLM_Learning_Projects">Source</a></sub></p>
     </td>
     <td width="50%">
-      <a href="ceylon-petals.vercel.app"><img src="./assets/projects/Ceylon_Petals.svg" width="100%" alt="Ceylon Petals — A complete online flower shop  with an AI chat assistant. Customers browse bouquets, hampers and plants, pay by card (PayHere), cash on delivery or Wh"/></a>
-      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Ceylon_Petals">Source</a> · <a href="ceylon-petals.vercel.app">Live demo</a></sub></p>
+      <a href="https://github.com/KasundiRanaweera/My_First_AI_Agent"><img src="./assets/projects/My_First_AI_Agent.svg" width="100%" alt="My First AI Agent — A personal assistant that understands requests, picks the right tool and acts — built from scratch in Python on a local Llama 3.1 model."/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/My_First_AI_Agent">Source</a></sub></p>
     </td>
   </tr>
 </table>
@@ -79,25 +79,29 @@
 <table>
   <tr>
     <td width="50%">
+      <a href="ceylon-petals.vercel.app"><img src="./assets/projects/Ceylon_Petals.svg" width="100%" alt="Ceylon Petals — A complete online flower shop  with an AI chat assistant. Customers browse bouquets, hampers and plants, pay by card (PayHere), cash on delivery or Wh"/></a>
+      <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Ceylon_Petals">Source</a> · <a href="ceylon-petals.vercel.app">Live demo</a></sub></p>
+    </td>
+    <td width="50%">
       <a href="https://github.com/KasundiRanaweera/Regression_ml_project"><img src="./assets/projects/Regression_ml_project.svg" width="100%" alt="Regression ML — Linear vs. polynomial regression on the diabetes dataset, evaluated with RMSE and R² and explained with feature coefficients."/></a>
       <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Regression_ml_project">Source</a></sub></p>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
       <a href="https://github.com/KasundiRanaweera/weather_app"><img src="./assets/projects/weather_app.svg" width="100%" alt="Weather App — Desktop weather dashboard on the OpenWeatherMap API with a modern CustomTkinter UI."/></a>
       <p align="center"><sub><a href="https://github.com/KasundiRanaweera/weather_app">Source</a></sub></p>
     </td>
-  </tr>
-  <tr>
     <td width="50%">
       <a href="https://github.com/KasundiRanaweera/Project-Approval-System"><img src="./assets/projects/Project-Approval-System.svg" width="100%" alt="PAS — Blind Matching — Matches student research proposals with supervisors while hiding student identities until a match is confirmed, to reduce bias."/></a>
       <p align="center"><sub><a href="https://github.com/KasundiRanaweera/Project-Approval-System">Source</a></sub></p>
     </td>
+  </tr>
+  <tr>
     <td width="50%">
       <a href="https://github.com/KasundiRanaweera/University-Shuttle-Service-"><img src="./assets/projects/University-Shuttle-Service-.svg" width="100%" alt="Campus Shuttle Service — University shuttle system with live maps and payments, backed by full design docs — use-case, class and EER diagrams plus sprint planning."/></a>
       <p align="center"><sub><a href="https://github.com/KasundiRanaweera/University-Shuttle-Service-">Source</a></sub></p>
     </td>
-  </tr>
-  <tr>
     <td width="50%">
       <a href="https://github.com/KasundiRanaweera/student_management_app"><img src="./assets/projects/student_management_app.svg" width="100%" alt="Student Management App — Flutter mobile app with full create, read, update and delete for student records in Firebase Firestore."/></a>
       <p align="center"><sub><a href="https://github.com/KasundiRanaweera/student_management_app">Source</a></sub></p>
